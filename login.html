@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoElite — Acesso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css">
+  </style>
+</head>
+<body>
+
+  <!-- Visual -->
+  <div class="login-visual">
+    <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1400&q=80" alt="">
+    <div class="visual-content">
+      <div class="visual-logo">
+        <div class="ico">🏎</div>
+        Auto<span>Elite</span>
+      </div>
+      <div class="visual-headline">
+        Bem-vindo ao<br>
+        painel <em>AutoElite</em>
+      </div>
+      <p class="visual-sub">
+        Gerencie seu estoque, acompanhe métricas em tempo real e conecte-se com clientes — tudo em um só lugar.
+      </p>
+      <div class="visual-stats">
+        <div>
+          <div class="vstat-num">200+</div>
+          <div class="vstat-lbl">Veículos</div>
+        </div>
+        <div>
+          <div class="vstat-num">15</div>
+          <div class="vstat-lbl">Anos</div>
+        </div>
+        <div>
+          <div class="vstat-num">4.8k</div>
+          <div class="vstat-lbl">Clientes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel de login -->
+  <div class="login-panel">
+    <div class="login-panel-header">
+      <h2>Acessar plataforma</h2>
+      <p>Selecione seu perfil e faça login</p>
+    </div>
+
+    <!-- Tabs de perfil -->
+    <div class="role-tabs">
+      <button class="role-tab ativo" id="tabAdmin" onclick="selecionarRole('admin')">
+        <span class="tab-ico">🛡</span>
+        Administrador
+      </button>
+      <button class="role-tab" id="tabCliente" onclick="selecionarRole('cliente')">
+        <span class="tab-ico">👤</span>
+        Cliente
+      </button>
+    </div>
+
+    <!-- Credenciais demo -->
+    <div class="demo-box" id="demoBox">
+      <p>🔑 Credenciais de demonstração</p>
+      <div class="demo-cred" id="demoCred">
+        <strong>E-mail:</strong> admin@autoelite.com<br>
+        <strong>Senha:</strong> admin123
+      </div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="erro-msg" id="erroMsg">E-mail ou senha incorretos. Tente novamente.</div>
+
+    <form id="formLogin" onsubmit="fazerLogin(event)">
+      <div class="form-grupo">
+        <label>E-mail</label>
+        <div class="input-wrap">
+          <span class="input-ico">✉</span>
+          <input type="email" id="inputEmail" placeholder="seu@email.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="form-grupo">
+        <label>Senha</label>
+        <div class="input-wrap">
+          <span class="input-ico">🔒</span>
+          <input type="password" id="inputSenha" placeholder="••••••••" required autocomplete="current-password">
+          <button type="button" class="mostrar-senha" id="btnMostrarSenha" onclick="toggleSenha()">👁</button>
+        </div>
+      </div>
+
+      <div class="form-extras">
+        <label class="check-wrap">
+          <input type="checkbox" id="lembrarMe"> Lembrar acesso
+        </label>
+        <span class="link-esqueci">Esqueci minha senha</span>
+      </div>
+
+      <button type="submit" class="btn-entrar" id="btnEntrar">
+        <span id="btnTexto">Entrar</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>© 2025 AutoElite. Todos os direitos reservados.</p>
+    </div>
+  </div>
+
+  <script src="db.js"></script>
+  <script src="login-script.js"></script>
+</body>
+</html>
