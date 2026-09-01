@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoElite — Painel Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ═══ SIDEBAR ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="ico">🏎</div>
+      Auto<span>Elite</span>
+    </div>
+
+    <div class="sidebar-label">Menu</div>
+    <ul class="sidebar-nav">
+      <li><a onclick="irPara('dashboard')" class="ativo" id="nav-dashboard">
+        <span class="nav-ico">📊</span> Dashboard
+      </a></li>
+      <li><a onclick="irPara('veiculos')" id="nav-veiculos">
+        <span class="nav-ico">🚗</span> Veículos
+      </a></li>
+      <li><a onclick="irPara('leads')" id="nav-leads">
+        <span class="nav-ico">📋</span> Leads
+        <span class="nav-badge" id="badgeLeads">0</span>
+      </a></li>
+    </ul>
+
+    <div class="sidebar-label">Acesso</div>
+    <ul class="sidebar-nav">
+      <li><a href="cliente.html" target="_blank">
+        <span class="nav-ico">👁</span> Ver vitrine
+      </a></li>
+      <li><a onclick="fazerLogout()">
+        <span class="nav-ico">🚪</span> Sair
+      </a></li>
+    </ul>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="userAvatar">AD</div>
+      <div>
+        <div class="user-nome" id="userName">Admin</div>
+        <div class="user-role">Administrador</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ══════════════════════════════════════════════ -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-titulo" id="topbarTitulo">Dashboard</div>
+        <div class="topbar-sub" id="topbarSub">Visão geral do sistema</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ouro" onclick="abrirModalVeiculo()">+ Novo veículo</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ PÁGINA: DASHBOARD ══ -->
+      <div class="page ativa" id="page-dashboard">
+
+        <!-- KPIs -->
+        <div class="kpi-grid" id="kpiGrid"></div>
+
+        <!-- Gráficos -->
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-title">Estoque por Combustível</div>
+            <div class="bar-chart" id="chartCombust"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Estoque por Tipo</div>
+            <div class="tipo-grid" id="chartTipo"></div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-title">🔥 Mais visualizados</div>
+            <div class="mais-vistos" id="maisVistos"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">📋 Leads recentes</div>
+            <div id="leadsRecentes"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ PÁGINA: VEÍCULOS ══ -->
+      <div class="page" id="page-veiculos">
+        <div class="table-toolbar">
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <div class="search-input-wrap">
+              <input type="text" id="buscaVeiculos" placeholder="Buscar veículo..." oninput="renderTabelaVeiculos()">
+            </div>
+            <select class="select-sm" id="filtroStatusV" onchange="renderTabelaVeiculos()">
+              <option value="">Todos os status</option>
+              <option value="disponivel">Disponível</option>
+              <option value="reservado">Reservado</option>
+              <option value="vendido">Vendido</option>
+            </select>
+          </div>
+          <button class="btn btn-ouro" onclick="abrirModalVeiculo()">+ Cadastrar veículo</button>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>Veículo</th>
+                  <th>Ano / Km</th>
+                  <th>Preço</th>
+                  <th>Status</th>
+                  <th>Visualiz.</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyVeiculos"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="emptyVeiculos" style="display:none">
+            <div class="ico">🚗</div>
+            <h3>Nenhum veículo encontrado</h3>
+            <p>Tente ajustar o filtro ou cadastre um novo veículo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PÁGINA: LEADS ══ -->
+      <div class="page" id="page-leads">
+        <div class="table-toolbar">
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <div class="search-input-wrap">
+              <input type="text" id="buscaLeads" placeholder="Buscar lead..." oninput="renderTabelaLeads()">
+            </div>
+            <select class="select-sm" id="filtroStatusL" onchange="renderTabelaLeads()">
+              <option value="">Todos</option>
+              <option value="novo">Novo</option>
+              <option value="contato">Em contato</option>
+              <option value="negociando">Negociando</option>
+              <option value="concluido">Concluído</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Contato</th>
+                  <th>Veículo</th>
+                  <th>Mensagem</th>
+                  <th>Data</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyLeads"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="emptyLeads" style="display:none">
+            <div class="ico">📋</div>
+            <h3>Sem leads no momento</h3>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+  <!-- ═══ MODAL CADASTRO / EDIÇÃO ══════════════════════════ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-titulo" id="modalTitulo">Novo Veículo</div>
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="veiculoId">
+
+        <div class="form-secao">Informações básicas</div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Marca *</label>
+            <select id="vMarca">
+              <option value="">Selecione</option>
+              <option>Audi</option><option>BMW</option><option>Chevrolet</option>
+              <option>Honda</option><option>Hyundai</option><option>Jeep</option>
+              <option>Kia</option><option>Land Rover</option><option>Mercedes-Benz</option>
+              <option>Nissan</option><option>Porsche</option><option>Tesla</option>
+              <option>Toyota</option><option>Volkswagen</option><option>Volvo</option>
+              <option>Outra</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Nome / Modelo *</label>
+            <input type="text" id="vNome" placeholder="Ex: BMW Série 3 330i">
+          </div>
+        </div>
+        <div class="form-grid cols3">
+          <div class="fg">
+            <label>Tipo *</label>
+            <select id="vTipo">
+              <option value="">Selecione</option>
+              <option>Sedan</option><option>Hatch</option><option>SUV</option>
+              <option>Picape</option><option>Esportivo</option><option>Minivan</option><option>Conversível</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Ano *</label>
+            <input type="number" id="vAno" placeholder="2024" min="1990" max="2026">
+          </div>
+          <div class="fg">
+            <label>Cor</label>
+            <input type="text" id="vCor" placeholder="Preto">
+          </div>
+        </div>
+
+        <div class="form-secao">Motor e Câmbio</div>
+        <div class="form-grid cols3">
+          <div class="fg">
+            <label>Combustível *</label>
+            <select id="vCombustivel">
+              <option value="">Selecione</option>
+              <option>Gasolina</option><option>Etanol</option><option>Flex</option>
+              <option>Diesel</option><option>Híbrido</option><option>Elétrico</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Câmbio *</label>
+            <select id="vCambio">
+              <option value="">Selecione</option>
+              <option>Manual</option><option>Automático</option><option>CVT</option><option>DCT</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Potência</label>
+            <input type="text" id="vPotencia" placeholder="258 cv">
+          </div>
+        </div>
+
+        <div class="form-secao">Comercial</div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Quilometragem *</label>
+            <input type="number" id="vKm" placeholder="12000" min="0">
+          </div>
+          <div class="fg">
+            <label>Preço (R$) *</label>
+            <input type="number" id="vPreco" placeholder="289900" min="0">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Status</label>
+            <select id="vStatus">
+              <option value="disponivel">Disponível</option>
+              <option value="reservado">Reservado</option>
+              <option value="vendido">Vendido</option>
+            </select>
+          </div>
+          <div class="fg fg-check">
+            <input type="checkbox" id="vDestaque">
+            <label for="vDestaque">⭐ Marcar como destaque</label>
+          </div>
+        </div>
+
+        <div class="form-secao">Imagem e Descrição</div>
+        <div class="form-grid cols1">
+          <div class="fg">
+            <label>URL da imagem *</label>
+            <input type="url" id="vImagem" placeholder="https://..." oninput="previewImagem()">
+            <img class="preview-img" id="previewImg" src="" alt="Preview">
+          </div>
+          <div class="fg">
+            <label>Descrição</label>
+            <textarea id="vDescricao" rows="3" placeholder="Descreva o veículo..."></textarea>
+          </div>
+          <div class="fg">
+            <label>Características (separadas por vírgula)</label>
+            <textarea id="vCaracteristicas" rows="2" placeholder="Teto solar, Bancos em couro, Câmera 360°..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-ouro" onclick="salvarVeiculo()">💾 Salvar veículo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="db.js"></script>
+  <script src="admin-script.js"></script>
+</body>
+</html>
