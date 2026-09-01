@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoElite — Vitrine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cliente.css">
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="ico">🏎</div>
+      Auto<span>Elite</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="av" id="userAv">CS</div>
+        <span id="userName">Cliente</span>
+      </div>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero-banner">
+    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1600&q=75" alt="">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Bem-vindo à vitrine</div>
+      <h1>Encontre seu carro <em>ideal</em></h1>
+      <p>Veículos premium com procedência garantida e as melhores condições</p>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="main-layout">
+
+    <!-- Filtros -->
+    <aside class="filtros">
+      <div class="filtros-titulo">🎛 Filtros</div>
+
+      <div class="fg">
+        <label>Buscar</label>
+        <input type="text" id="busca" placeholder="Marca, modelo, tipo..." oninput="renderCards()">
+      </div>
+      <div class="fg">
+        <label>Marca</label>
+        <select id="fMarca" onchange="renderCards()">
+          <option value="">Todas</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Tipo</label>
+        <select id="fTipo" onchange="renderCards()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Combustível</label>
+        <div class="chips" id="chipsCombus">
+          <button class="chip" data-c="Gasolina" onclick="toggleChip(this,'combustivel')">⛽ Gasolina</button>
+          <button class="chip" data-c="Híbrido"  onclick="toggleChip(this,'combustivel')">⚡ Híbrido</button>
+          <button class="chip" data-c="Elétrico" onclick="toggleChip(this,'combustivel')">🔋 Elétrico</button>
+          <button class="chip" data-c="Flex"     onclick="toggleChip(this,'combustivel')">🌿 Flex</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Preço máximo</label>
+        <div class="range-wrap">
+          <input type="range" id="fPreco" min="50000" step="10000" oninput="renderCards();atualizarPrecoLabel()">
+        </div>
+        <div class="range-labels">
+          <span>R$ 50.000</span>
+          <span id="labelPreco"></span>
+        </div>
+      </div>
+      <button class="btn-reset" onclick="resetarFiltros()">Limpar filtros</button>
+    </aside>
+
+    <!-- Resultados -->
+    <div>
+      <div class="resultados-header">
+        <div class="resultados-info"><strong id="totalResultados">0</strong> veículos encontrados</div>
+        <div class="sort-wrap">
+          <label>Ordenar</label>
+          <select id="ordem" onchange="renderCards()">
+            <option value="destaque">Destaque</option>
+            <option value="preco_asc">Menor preço</option>
+            <option value="preco_desc">Maior preço</option>
+            <option value="ano_desc">Mais novo</option>
+            <option value="km_asc">Menor km</option>
+          </select>
+        </div>
+      </div>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">© 2025 AutoElite — Todos os direitos reservados</div>
+
+  <!-- ── Modal detalhe ──── -->
+  <div class="modal-overlay" id="modalDetalhe">
+    <div class="modal">
+      <div class="modal-img">
+        <img id="mImg" src="" alt="">
+        <button class="modal-close" onclick="fecharModal('modalDetalhe')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-marca" id="mMarca"></div>
+        <div class="modal-nome"  id="mNome"></div>
+        <div class="modal-grid">
+          <div>
+            <p class="modal-desc" id="mDesc"></p>
+            <div class="modal-specs-grid" id="mSpecs"></div>
+          </div>
+          <div class="modal-carac">
+            <p style="font-size:.72rem;color:var(--cinza);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.65rem">Equipamentos</p>
+            <ul id="mCarac"></ul>
+          </div>
+        </div>
+        <div class="modal-bottom">
+          <div>
+            <div class="modal-preco-lbl">Preço</div>
+            <div class="modal-preco" id="mPreco"></div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" id="mBtnFav">♡ Favoritar</button>
+            <button class="btn btn-ouro" id="mBtnContato">💬 Tenho interesse</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal contato ──── -->
+  <div class="modal-overlay" id="modalContato">
+    <div class="contato-modal">
+      <div class="contato-header">
+        <h3>💬 Entrar em contato</h3>
+        <button class="modal-close" style="position:static" onclick="fecharModal('modalContato')">✕</button>
+      </div>
+      <div class="contato-body">
+        <div class="contato-veiculo" id="contatoVeiculo"></div>
+        <div class="fg-c">
+          <label>Seu nome *</label>
+          <input type="text" id="cNome" placeholder="Nome completo">
+        </div>
+        <div class="fg-c">
+          <label>Telefone / WhatsApp *</label>
+          <input type="tel" id="cTel" placeholder="(11) 99999-9999">
+        </div>
+        <div class="fg-c">
+          <label>E-mail</label>
+          <input type="email" id="cEmail" placeholder="seu@email.com">
+        </div>
+        <div class="fg-c">
+          <label>Mensagem</label>
+          <textarea id="cMsg" rows="3" placeholder="Olá, tenho interesse neste veículo..."></textarea>
+        </div>
+        <div style="display:flex;gap:.65rem;margin-top:1rem">
+          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="fecharModal('modalContato')">Cancelar</button>
+          <button class="btn btn-ouro" style="flex:1;justify-content:center" onclick="enviarContato()">Enviar mensagem</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="db.js"></script>
+  <script src="cliente-script.js"></script>
+</body>
+</html>
