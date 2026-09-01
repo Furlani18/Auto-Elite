@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoElite — Veículos Premium</title>
+  <meta name="description" content="AutoElite — Sua concessionária de veículos premium. Mais de 200 veículos selecionados com garantia e procedência.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ═══ NAVBAR ═══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">🏎</div>
+      Auto<span class="ouro">Elite</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#destaques" class="active">Destaques</a></li>
+      <li><a href="#catalogo">Catálogo</a></li>
+      <li><a href="#diferenciais">Diferenciais</a></li>
+      <li><a href="#avaliacao">Avalie seu carro</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="nav-tel">Fale conosco: <span>(11) 3000-9999</span></div>
+      <a href="https://wa.me/5511999999999" class="btn btn-ouro btn-sm" target="_blank">
+        💬 WhatsApp
+      </a>
+      <div class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Menu mobile -->
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="nav-mobile" id="navMobile">
+    <button class="nav-mobile-close" id="navMobileClose">✕</button>
+    <ul>
+      <li><a href="#destaques">Destaques</a></li>
+      <li><a href="#catalogo">Catálogo</a></li>
+      <li><a href="#diferenciais">Diferenciais</a></li>
+      <li><a href="#avaliacao">Avalie seu carro</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <div class="nav-mobile-tel">
+      Fale conosco
+      <span>(11) 3000-9999</span>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════ -->
+  <section class="hero" id="inicio">
+    <img
+      class="hero-img"
+      src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=1800&q=85"
+      alt="Veículo premium AutoElite"
+    >
+    <div class="hero-bg"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Concessionária Premium</div>
+      <h1>
+        Seu próximo<br>
+        carro <em>dos sonhos</em><br>
+        está aqui
+      </h1>
+      <p class="hero-desc">
+        Mais de 200 veículos selecionados com procedência garantida,
+        revisão completa e as melhores condições de financiamento do mercado.
+      </p>
+      <div class="hero-ctas">
+        <a href="#catalogo" class="btn btn-ouro">Ver catálogo completo</a>
+        <a href="#avaliacao" class="btn btn-outline">Avaliar meu carro</a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat-item">
+        <div class="num" data-count="200" data-suffix="+">0+</div>
+        <div class="lbl">Veículos disponíveis</div>
+      </div>
+      <div class="hero-stat-item">
+        <div class="num" data-count="15" data-suffix=" anos">0 anos</div>
+        <div class="lbl">No mercado</div>
+      </div>
+      <div class="hero-stat-item">
+        <div class="num" data-count="4800" data-suffix="+">0+</div>
+        <div class="lbl">Clientes satisfeitos</div>
+      </div>
+    </div>
+
+    <div class="hero-scroll" id="heroScroll">
+      <div class="scroll-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <!-- ═══ DESTAQUES ════════════════════════════════════════ -->
+  <section class="section destaques" id="destaques">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Seleção exclusiva</div>
+        <h2 class="section-title">Veículos em <span class="ouro">destaque</span></h2>
+        <p class="section-subtitle">Os mais procurados da semana, com condições especiais de negociação.</p>
+      </div>
+      <div class="destaques-grid" id="destaquesGrid">
+        <!-- Populado por JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CATÁLOGO ═════════════════════════════════════════ -->
+  <section class="section catalogo" id="catalogo">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Estoque completo</div>
+        <h2 class="section-title">Catálogo de <span class="ouro">veículos</span></h2>
+        <p class="section-subtitle">Filtre por marca, tipo, combustível e faixa de preço.</p>
+      </div>
+
+      <div class="catalogo-layout">
+
+        <!-- ── Painel de filtros ── -->
+        <aside class="filtros-panel">
+          <div class="filtros-titulo">🎛 Filtros</div>
+
+          <!-- Busca -->
+          <div class="filtro-grupo">
+            <label>Buscar</label>
+            <input type="text" id="buscaInput" placeholder="Nome, marca, tipo...">
+          </div>
+
+          <!-- Marca -->
+          <div class="filtro-grupo">
+            <label>Marca</label>
+            <select id="filtroMarca">
+              <option value="">Todas as marcas</option>
+            </select>
+          </div>
+
+          <!-- Tipo -->
+          <div class="filtro-grupo">
+            <label>Tipo</label>
+            <select id="filtroTipo">
+              <option value="">Todos os tipos</option>
+            </select>
+          </div>
+
+          <!-- Combustível chips -->
+          <div class="filtro-grupo">
+            <label>Combustível</label>
+            <select id="filtroComb" style="margin-bottom:.75rem">
+              <option value="">Todos</option>
+            </select>
+            <div class="chips-filtro">
+              <button class="chip" data-comb="Gasolina">⛽ Gasolina</button>
+              <button class="chip" data-comb="Híbrido">⚡ Híbrido</button>
+              <button class="chip" data-comb="Elétrico">🔋 Elétrico</button>
+            </div>
+          </div>
+
+          <!-- Preço máximo -->
+          <div class="filtro-grupo">
+            <label>Preço máximo</label>
+            <input type="range" id="filtroPreco" min="50000" step="10000">
+            <div class="preco-range-labels">
+              <span>R$ 50.000</span>
+              <span id="precoMaxLabel"></span>
+            </div>
+          </div>
+
+          <div class="filtros-footer">
+            <button class="btn btn-ghost btn-sm" id="btnResetFiltros" style="width:100%">
+              Limpar filtros
+            </button>
+          </div>
+        </aside>
+
+        <!-- ── Grade de veículos ── -->
+        <div>
+          <div class="catalogo-header">
+            <div class="catalogo-info">
+              <strong id="totalResultados">0</strong> veículos encontrados
+            </div>
+            <div class="ordenar-wrap">
+              <label for="ordenacao">Ordenar por</label>
+              <select id="ordenacao">
+                <option value="destaque">Em destaque</option>
+                <option value="preco_asc">Menor preço</option>
+                <option value="preco_desc">Maior preço</option>
+                <option value="ano_desc">Mais novo</option>
+                <option value="km_asc">Menor km</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="veiculos-grid" id="veiculosGrid">
+            <!-- Populado por JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DIFERENCIAIS ═════════════════════════════════════ -->
+  <section class="section diferenciais" id="diferenciais">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Por que a AutoElite</div>
+        <h2 class="section-title">Nossos <span class="ouro">diferenciais</span></h2>
+      </div>
+      <div class="diferenciais-grid">
+
+        <div class="dif-card">
+          <div class="dif-ico">🔍</div>
+          <div class="dif-num" data-count="100" data-suffix="%">0%</div>
+          <div class="dif-titulo">Procedência garantida</div>
+          <p class="dif-desc">Todos os veículos passam por vistoria completa com laudo técnico e checagem de histórico antes de entrar no nosso estoque.</p>
+        </div>
+
+        <div class="dif-card">
+          <div class="dif-ico">🛡</div>
+          <div class="dif-num" data-count="12" data-suffix=" meses">0 meses</div>
+          <div class="dif-titulo">Garantia em todos</div>
+          <p class="dif-desc">Oferecemos garantia mínima de 12 meses em todos os veículos do nosso estoque, sem letras miúdas.</p>
+        </div>
+
+        <div class="dif-card">
+          <div class="dif-ico">💳</div>
+          <div class="dif-num">96×</div>
+          <div class="dif-titulo">Financiamento facilitado</div>
+          <p class="dif-desc">Trabalhamos com os principais bancos para oferecer as melhores taxas e prazos, com aprovação rápida em até 2 horas.</p>
+        </div>
+
+        <div class="dif-card">
+          <div class="dif-ico">🔄</div>
+          <div class="dif-num" data-count="48" data-suffix="h">0h</div>
+          <div class="dif-titulo">Troca e avaliação</div>
+          <p class="dif-desc">Avaliamos seu veículo atual na hora e facilitamos a troca com o melhor preço do mercado, sem complicação.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ AVALIAÇÃO / FORMULÁRIO ════════════════════════════ -->
+  <section class="section avaliacao" id="avaliacao">
+    <div class="container">
+      <div class="avaliacao-inner">
+
+        <!-- Texto -->
+        <div>
+          <span class="aval-tag">Avalie seu carro</span>
+          <h2 class="aval-title">Quer trocar<br>seu veículo?</h2>
+          <p class="aval-desc">
+            Receba uma avaliação profissional gratuita e use seu carro atual como entrada.
+            Nosso time de especialistas entra em contato em até 24 horas.
+          </p>
+          <div class="aval-steps">
+            <div class="aval-step">
+              <div class="step-num">1</div>
+              <div class="step-info">
+                <h4>Preencha o formulário</h4>
+                <p>Dados básicos do seu veículo atual</p>
+              </div>
+            </div>
+            <div class="aval-step">
+              <div class="step-num">2</div>
+              <div class="step-info">
+                <h4>Receba a avaliação</h4>
+                <p>Nossa equipe analisa e te envia uma proposta justa</p>
+              </div>
+            </div>
+            <div class="aval-step">
+              <div class="step-num">3</div>
+              <div class="step-info">
+                <h4>Faça o negócio</h4>
+                <p>Use o valor como entrada no seu próximo veículo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulário -->
+        <div class="aval-form-wrap">
+          <div class="aval-form-title">Solicitar avaliação <span class="ouro">gratuita</span></div>
+          <form id="formAvaliacao">
+            <div class="form-row">
+              <div class="form-grupo">
+                <label>Nome completo</label>
+                <input type="text" placeholder="Seu nome" required>
+              </div>
+              <div class="form-grupo">
+                <label>Telefone / WhatsApp</label>
+                <input type="tel" placeholder="(11) 99999-9999" required>
+              </div>
+            </div>
+            <div class="form-grupo">
+              <label>E-mail</label>
+              <input type="email" placeholder="seu@email.com">
+            </div>
+            <div class="form-row">
+              <div class="form-grupo">
+                <label>Marca do veículo</label>
+                <input type="text" placeholder="Ex: Toyota" required>
+              </div>
+              <div class="form-grupo">
+                <label>Modelo</label>
+                <input type="text" placeholder="Ex: Corolla" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-grupo">
+                <label>Ano</label>
+                <input type="number" placeholder="2020" min="1990" max="2025" required>
+              </div>
+              <div class="form-grupo">
+                <label>Quilometragem</label>
+                <input type="text" placeholder="Ex: 45.000 km">
+              </div>
+            </div>
+            <div class="form-grupo">
+              <label>Condição geral</label>
+              <select>
+                <option value="">Selecione</option>
+                <option>Excelente — sem avarias</option>
+                <option>Bom — pequenos detalhes</option>
+                <option>Regular — precisa de reparos</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-ouro" style="width:100%;justify-content:center;margin-top:.5rem">
+              Solicitar avaliação gratuita →
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DEPOIMENTOS ══════════════════════════════════════ -->
+  <section class="section depoimentos" id="depoimentos">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Quem já comprou</div>
+        <h2 class="section-title">O que nossos <span class="ouro">clientes</span> dizem</h2>
+      </div>
+      <div class="depoimentos-grid">
+
+        <div class="dep-card">
+          <div class="dep-estrelas">★★★★★</div>
+          <p class="dep-texto">
+            Comprei meu BMW Série 3 aqui e foi a melhor experiência de compra de carro que já tive.
+            Atendimento impecável, transparência total e processo rápido. Recomendo demais!
+          </p>
+          <div class="dep-autor">
+            <div class="dep-avatar">RM</div>
+            <div>
+              <div class="dep-nome">Ricardo Mendes</div>
+              <div class="dep-sub">São Paulo, SP · BMW Série 3</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dep-card">
+          <div class="dep-estrelas">★★★★★</div>
+          <p class="dep-texto">
+            Avaliaram meu Corolla com o melhor preço que achei em toda a cidade e ainda facilitaram
+            o financiamento do meu novo Volvo XC60. Time muito atencioso e sem pressão.
+          </p>
+          <div class="dep-autor">
+            <div class="dep-avatar">FC</div>
+            <div>
+              <div class="dep-nome">Fernanda Carvalho</div>
+              <div class="dep-sub">Campinas, SP · Volvo XC60</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dep-card">
+          <div class="dep-estrelas">★★★★★</div>
+          <p class="dep-texto">
+            Sempre desconfiei de comprar carro usado, mas a AutoElite quebrou esse preconceito.
+            Laudo completo, garantia de 12 meses e o Porsche que sempre sonhei nas mãos.
+          </p>
+          <div class="dep-autor">
+            <div class="dep-avatar">GA</div>
+            <div>
+              <div class="dep-nome">Gustavo Almeida</div>
+              <div class="dep-sub">Ribeirão Preto, SP · Porsche Cayenne</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════ -->
+  <footer class="footer" id="contato">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Brand -->
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon">🏎</div>
+            Auto<span class="ouro">Elite</span>
+          </div>
+          <p>
+            Há 15 anos conectando pessoas aos melhores veículos do mercado.
+            Procedência, garantia e as melhores condições são a nossa assinatura.
+          </p>
+          <div class="footer-socials">
+            <div class="social-btn" title="Instagram">📸</div>
+            <div class="social-btn" title="Facebook">👤</div>
+            <div class="social-btn" title="YouTube">▶</div>
+            <div class="social-btn" title="LinkedIn">💼</div>
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-col">
+          <h4>Navegação</h4>
+          <ul>
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#destaques">Destaques</a></li>
+            <li><a href="#catalogo">Catálogo</a></li>
+            <li><a href="#diferenciais">Diferenciais</a></li>
+            <li><a href="#avaliacao">Avalie seu carro</a></li>
+          </ul>
+        </div>
+
+        <!-- Serviços -->
+        <div class="footer-col">
+          <h4>Serviços</h4>
+          <ul>
+            <li><a href="#">Financiamento</a></li>
+            <li><a href="#">Consórcio</a></li>
+            <li><a href="#">Avaliação gratuita</a></li>
+            <li><a href="#">Revisão e Garantia</a></li>
+            <li><a href="#">Seguro veicular</a></li>
+            <li><a href="#">Blindagem</a></li>
+          </ul>
+        </div>
+
+        <!-- Contato -->
+        <div class="footer-col footer-contato">
+          <h4>Contato</h4>
+          <div class="contato-item">
+            <span class="ico">📍</span>
+            <span>Av. Paulista, 1000 — Bela Vista<br>São Paulo — SP</span>
+          </div>
+          <div class="contato-item">
+            <span class="ico">📞</span>
+            <a href="tel:1130009999">(11) 3000-9999</a>
+          </div>
+          <div class="contato-item">
+            <span class="ico">💬</span>
+            <a href="https://wa.me/5511999999999" target="_blank">(11) 99999-9999</a>
+          </div>
+          <div class="contato-item">
+            <span class="ico">✉</span>
+            <a href="mailto:contato@autoelite.com.br">contato@autoelite.com.br</a>
+          </div>
+          <div class="contato-item">
+            <span class="ico">🕐</span>
+            <span>Seg–Sex 8h–19h · Sáb 8h–16h</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 AutoElite. Todos os direitos reservados.</p>
+        <div class="legal">
+          <a href="#">Política de Privacidade</a>
+          <a href="#">Termos de Uso</a>
+          <a href="#">LGPD</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ MODAL DE DETALHE ══════════════════════════════════ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-img-wrap">
+        <img id="modalImg" src="" alt="">
+        <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-marca" id="modalMarca"></div>
+        <div class="modal-nome" id="modalNome"></div>
+        <div class="modal-grid">
+          <div class="modal-info">
+            <p id="modalDesc"></p>
+            <div class="modal-specs-grid" id="modalSpecs"></div>
+          </div>
+          <div class="modal-carac">
+            <p style="font-size:.78rem;color:var(--cinza);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.75rem">Equipamentos</p>
+            <ul id="modalCarac"></ul>
+          </div>
+        </div>
+        <div class="modal-price-bar">
+          <div>
+            <div class="modal-preco-lbl">Preço</div>
+            <div class="modal-preco-val" id="modalPreco"></div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" id="modalBtnFav">♡ Favoritar</button>
+            <button class="btn btn-ouro" id="modalBtnWpp">💬 Falar via WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═════════════════════════════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
