@@ -2,6 +2,8 @@
 //  AutoElite — Script principal
 // ============================================================
 
+let VEICULOS = []
+
 /* ─── Estado da aplicação ─────────────────────────────────── */
 const estado = {
   veiculosFiltrados: [],
@@ -103,18 +105,29 @@ function initFiltros() {
   const selComb  = document.getElementById('filtroComb');
   const rangePreco = document.getElementById('filtroPreco');
 
-  // Popula selects
+  // 1. Extrai as listas dinamicamente direto dos veículos que vieram do banco
+  // O "Set" garante que não teremos itens repetidos no menu
+  const MARCAS = [...new Set(VEICULOS.map(v => v.marca))].filter(Boolean).sort();
+  const TIPOS = [...new Set(VEICULOS.map(v => v.tipo))].filter(Boolean).sort();
+  const COMBUSTIVEIS = [...new Set(VEICULOS.map(v => v.combustivel))].filter(Boolean).sort();
+
+  // 2. Popula os selects (garantindo que a primeira opção seja sempre "Todos")
+  selMarca.innerHTML = '<option value="">Todas as marcas</option>';
+  selTipo.innerHTML  = '<option value="">Todos os tipos</option>';
+  selComb.innerHTML  = '<option value="">Todos</option>';
+
   MARCAS.forEach(m => selMarca.innerHTML += `<option value="${m}">${m}</option>`);
   TIPOS.forEach(t  => selTipo.innerHTML  += `<option value="${t}">${t}</option>`);
   COMBUSTIVEIS.forEach(c => selComb.innerHTML += `<option value="${c}">${c}</option>`);
 
-  // Range de preço
-  const precoMax = Math.max(...VEICULOS.map(v => v.preco));
+  // 3. Range de preço (com proteção caso o banco ainda esteja vazio)
+  const precoMax = VEICULOS.length > 0 ? Math.max(...VEICULOS.map(v => v.preco)) : 900000;
   rangePreco.max = precoMax;
   rangePreco.value = precoMax;
   estado.filtros.precoMax = precoMax;
   atualizarLabelPreco(precoMax);
 
+  // 4. Listeners (mantidos exatamente como você fez)
   rangePreco.addEventListener('input', () => {
     const val = +rangePreco.value;
     estado.filtros.precoMax = val;
@@ -158,6 +171,22 @@ function initFiltros() {
   // Reset
   document.getElementById('btnResetFiltros')?.addEventListener('click', resetarFiltros);
 }
+
+  // Busca
+  document.getElementById('buscaInput')?.addEventListener('input', e => {
+    estado.filtros.busca = e.target.value.toLowerCase();
+    aplicarFiltros();
+  });
+
+  // Ordenação
+  document.getElementById('ordenacao')?.addEventListener('change', e => {
+    estado.ordenacao = e.target.value;
+    aplicarFiltros();
+  });
+
+  // Reset
+  document.getElementById('btnResetFiltros')?.addEventListener('click', resetarFiltros);
+
 
 function atualizarLabelPreco(val) {
   document.getElementById('precoMaxLabel').textContent = formatarPreco(val);
@@ -421,17 +450,29 @@ function initScrollLinks() {
 
 /* ─── Init ────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  // Popula dados iniciais
-  estado.veiculosFiltrados = [...VEICULOS];
-
+  // 1. Inicializa o que não depende do banco
   initNavbar();
   initHero();
-  renderDestaques();
-  initFiltros();
-  aplicarFiltros();
   initModal();
   initFormAvaliacao();
   initAnimacoes();
   animarContadores();
   initScrollLinks();
+
+  // 2. Busca os carros reais da API
+  fetch('api_carros.php')
+    .then(response => response.json())
+    .then(dados => {
+      VEICULOS = dados; // Guarda os carros recebidos
+      estado.veiculosFiltrados = [...VEICULOS]; // Copia para os filtros
+      
+      // 3. Renderiza tudo na tela
+      renderDestaques();
+      initFiltros();
+      aplicarFiltros();
+    })
+    .catch(erro => {
+      console.error("Erro ao carregar a vitrine:", erro);
+      mostrarToast("Erro ao carregar o catálogo de veículos.");
+    });
 });
