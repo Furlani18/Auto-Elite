@@ -1,3 +1,4 @@
+let veiculosDoBanco = []; // Variável para armazenar os dados reais
 // ── Guard de autenticação ──────────────────────────────
 const sessao = DB.getSessao();
 if (!sessao || sessao.role !== 'admin') window.location.href = 'login.html';
@@ -128,11 +129,22 @@ function renderDashboard() {
   }).join('') || '<p style="color:var(--cinza);font-size:.85rem">Nenhum lead ainda.</p>';
 }
 
+function carregarVeiculosAdmin() {
+  fetch('api_carros.php')
+    .then(res => res.json())
+    .then(dados => {
+      veiculosDoBanco = dados;
+      renderTabelaVeiculos(); // Desenha a tabela após receber os dados
+      renderDashboard(); // Atualiza os números do dashboard
+    })
+    .catch(erro => console.error("Erro ao carregar veículos:", erro));
+}
+
 // ── Tabela de veículos ────────────────────────────────
 function renderTabelaVeiculos() {
   const busca  = (document.getElementById('buscaVeiculos')?.value || '').toLowerCase();
   const status = document.getElementById('filtroStatusV')?.value || '';
-  let lista = DB.getVeiculos();
+  let lista = veiculosDoBanco; 
   if (busca)  lista = lista.filter(v => `${v.nome} ${v.marca} ${v.tipo}`.toLowerCase().includes(busca));
   if (status) lista = lista.filter(v => v.status === status);
 
@@ -264,54 +276,88 @@ function limparFormVeiculo() {
 function previewImagem() {
   const url = document.getElementById('vImagem').value.trim();
   const img = document.getElementById('previewImg');
-  if (url) { img.src = url; img.classList.add('show'); }
-  else      { img.classList.remove('show'); }
+  
+  // Só tenta carregar a imagem se o texto começar com "http" (for um link real)
+  if (url.startsWith('http')) { 
+    img.src = url; 
+    img.classList.add('show'); 
+  } else { 
+    img.classList.remove('show'); 
+  }
 }
 
 function salvarVeiculo() {
-  const id     = document.getElementById('veiculoId').value;
-  const marca  = document.getElementById('vMarca').value.trim();
-  const nome   = document.getElementById('vNome').value.trim();
-  const tipo   = document.getElementById('vTipo').value;
-  const ano    = +document.getElementById('vAno').value;
-  const comb   = document.getElementById('vCombustivel').value;
+  // 1. Coleta todos os valores digitados nos inputs do HTML
+  const marca = document.getElementById('vMarca').value;
+  const nome = document.getElementById('vNome').value;
+  const tipo = document.getElementById('vTipo').value;
+  const ano = document.getElementById('vAno').value;
+  const cor = document.getElementById('vCor').value;
+  const combustivel = document.getElementById('vCombustivel').value;
   const cambio = document.getElementById('vCambio').value;
-  const km     = +document.getElementById('vKm').value;
-  const preco  = +document.getElementById('vPreco').value;
-  const imagem = document.getElementById('vImagem').value.trim();
+  const potencia = document.getElementById('vPotencia').value;
+  const km = document.getElementById('vKm').value;
+  const preco = document.getElementById('vPreco').value;
+  const status = document.getElementById('vStatus').value;
+  const destaque = document.getElementById('vDestaque').checked; // Checkbox usa .checked
+  const imagem = document.getElementById('vImagem').value;
+  const descricao = document.getElementById('vDescricao').value;
+  const caracteristicas = document.getElementById('vCaracteristicas').value;
 
-  if (!marca || !nome || !tipo || !ano || !comb || !cambio || km < 0 || preco <= 0 || !imagem) {
-    toast('⚠ Preencha todos os campos obrigatórios (*)', 'erro');
+  // 2. Validação simples (Garante que os campos com * foram preenchidos)
+  if (!marca || !nome || !tipo || !ano || !combustivel || !cambio || km === '' || preco === '' || !imagem) {
+    alert("⚠️ Por favor, preencha todos os campos obrigatórios (*).");
     return;
   }
 
-  const dados = {
-    marca, nome, tipo, ano, cor: document.getElementById('vCor').value,
-    combustivel: comb, cambio, potencia: document.getElementById('vPotencia').value,
-    km, preco, status: document.getElementById('vStatus').value,
-    destaque: document.getElementById('vDestaque').checked,
-    imagem, descricao: document.getElementById('vDescricao').value,
-    caracteristicas: document.getElementById('vCaracteristicas').value,
+  // 3. Monta o objeto para enviar
+  const novoCarro = {
+    marca, nome, tipo, ano, cor, combustivel, cambio, potencia, km, preco, status, destaque, imagem, descricao, caracteristicas
   };
 
-  if (id) {
-    DB.updateVeiculo(+id, dados);
-    toast('✅ Veículo atualizado com sucesso!', 'sucesso');
-  } else {
-    DB.addVeiculo(dados);
-    toast('✅ Veículo cadastrado com sucesso!', 'sucesso');
-  }
+  // 4. Efeito visual no botão enquanto salva
+  const btnSalvar = document.querySelector('.modal-footer .btn-ouro');
+  const textoOriginal = btnSalvar.innerHTML;
+  btnSalvar.innerHTML = '⏳ Salvando...';
+  btnSalvar.disabled = true;
 
-  fecharModal();
-  if (document.getElementById('page-veiculos').classList.contains('ativa')) renderTabelaVeiculos();
-  if (document.getElementById('page-dashboard').classList.contains('ativa')) renderDashboard();
+  // 5. Envia os dados para o PHP
+  fetch('api_cadastrar_carro.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(novoCarro)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.sucesso) {
+      // Usa sua função de toast existente para mostrar o sucesso
+      toast(data.mensagem || "Veículo cadastrado!", 'sucesso');
+      
+      // Fecha o modal
+      fecharModal();
+      
+      
+      // DICA: Aqui você chamaria a função que recarrega a tabela de veículos
+      carregarVeiculosAdmin(); 
+    } else {
+      alert("❌ Erro no banco: " + data.mensagem);
+    }
+  })
+  .catch(erro => {
+    console.error("Erro na requisição:", erro);
+    alert("❌ Erro ao tentar se conectar com o servidor.");
+  })
+  .finally(() => {
+    // Volta o botão ao estado normal
+    btnSalvar.innerHTML = textoOriginal;
+    btnSalvar.disabled = false;
+  });
 }
 
-// Fecha modal ao clicar fora
 document.getElementById('modalOverlay').addEventListener('click', e => {
   if (e.target === e.currentTarget) fecharModal();
 });
 
 // ── Init ──────────────────────────────────────────────
 atualizarBadge();
-renderDashboard();
+carregarVeiculosAdmin();
