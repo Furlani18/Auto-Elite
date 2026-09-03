@@ -1,18 +1,26 @@
-let veiculosDoBanco = []; // Variável para armazenar os dados reais
+let veiculosDoBanco = [];
+let leadsDoBanco = []; 
+
+// ── Utilitários de Formatação ─────────────────────────
+const formatarPreco = v => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+const formatarKm = v => Number(v).toLocaleString('pt-BR') + ' km';
+
 // ── Guard de autenticação ──────────────────────────────
-const sessao = DB.getSessao();
+const sessao = JSON.parse(localStorage.getItem('ae_sessao') || 'null');
 if (!sessao || sessao.role !== 'admin') window.location.href = 'login.html';
 
 // ── Preenche usuário na sidebar ───────────────────────
-document.getElementById('userAvatar').textContent = sessao.avatar;
-document.getElementById('userName').textContent   = sessao.nome;
+document.getElementById('userAvatar').textContent = sessao.avatar || 'AD';
+document.getElementById('userName').textContent   = sessao.nome || 'Admin';
 
 // ── Atualiza badge de leads ────────────────────────────
 function atualizarBadge() {
-  const n = DB.getLeads().filter(l => l.status === 'novo').length;
+  const n = leadsDoBanco.filter(l => l.status === 'novo').length;
   const el = document.getElementById('badgeLeads');
-  el.textContent = n;
-  el.style.display = n ? 'inline-block' : 'none';
+  if (el) {
+    el.textContent = n;
+    el.style.display = n ? 'inline-block' : 'none';
+  }
 }
 
 // ── Navegação ─────────────────────────────────────────
@@ -25,8 +33,13 @@ const TITULOS = {
 function irPara(pagina) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
   document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('ativo'));
-  document.getElementById('page-' + pagina).classList.add('ativa');
-  document.getElementById('nav-' + pagina).classList.add('ativo');
+  
+  const pageEl = document.getElementById('page-' + pagina);
+  const navEl = document.getElementById('nav-' + pagina);
+  
+  if(pageEl) pageEl.classList.add('ativa');
+  if(navEl) navEl.classList.add('ativo');
+  
   const [t, s] = TITULOS[pagina];
   document.getElementById('topbarTitulo').textContent = t;
   document.getElementById('topbarSub').textContent    = s;
@@ -37,107 +50,108 @@ function irPara(pagina) {
 }
 
 function fazerLogout() {
-  DB.logout();
+  localStorage.removeItem('ae_sessao');
   window.location.href = 'login.html';
 }
 
 // ── Toast ─────────────────────────────────────────────
 function toast(msg, tipo = '') {
   const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'toast ' + tipo;
+  el.textContent = msg; 
+  el.className = 'toast ' + tipo;
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 3200);
 }
 
 // ── Dashboard ─────────────────────────────────────────
 function renderDashboard() {
-  const s = DB.getStats();
+  const ativos = veiculosDoBanco.filter(v => v.status !== 'vendido');
+  const vendidos = veiculosDoBanco.filter(v => v.status === 'vendido');
+  const totalEstoque = ativos.length + vendidos.length;
+  const valorTotal = ativos.reduce((soma, v) => soma + Number(v.preco), 0);
+  const totalViews = veiculosDoBanco.reduce((soma, v) => soma + (Number(v.views) || 0), 0);
+  const leadsNovos = leadsDoBanco.filter(l => l.status === 'novo');
 
-  // KPIs
-  document.getElementById('kpiGrid').innerHTML = `
-    <div class="kpi-card k-ouro">
-      <div class="kpi-ico">🚗</div>
-      <div class="kpi-val">${s.total}</div>
-      <div class="kpi-lbl">Total em estoque</div>
-      <div class="kpi-delta delta-pos">▲ ${s.disponiveis} disponíveis</div>
-    </div>
-    <div class="kpi-card k-verde">
-      <div class="kpi-ico">💰</div>
-      <div class="kpi-val">${DB.formatarPreco(s.valorEstoque)}</div>
-      <div class="kpi-lbl">Valor total do estoque</div>
-      <div class="kpi-delta">${s.vendidos} vendidos</div>
-    </div>
-    <div class="kpi-card k-azul">
-      <div class="kpi-ico">👁</div>
-      <div class="kpi-val">${s.visualizacoes.toLocaleString('pt-BR')}</div>
-      <div class="kpi-lbl">Total de visualizações</div>
-      <div class="kpi-delta delta-pos">▲ No período</div>
-    </div>
-    <div class="kpi-card k-lrj">
-      <div class="kpi-ico">📋</div>
-      <div class="kpi-val">${s.totalLeads}</div>
-      <div class="kpi-lbl">Leads cadastrados</div>
-      <div class="kpi-delta delta-neg">● ${s.leadsNovos} novos</div>
-    </div>
-  `;
+  atualizarBadge();
 
-  // Combustível barras
-  const maxC = Math.max(...Object.values(s.porCombust));
-  const cores = { Gasolina:'#C9A84C', Híbrido:'#3498db', Elétrico:'#2ecc71', Diesel:'#e74c3c', Flex:'#9b59b6', Etanol:'#f39c12' };
-  document.getElementById('chartCombust').innerHTML = Object.entries(s.porCombust).map(([k,v]) => `
-    <div class="bar-item">
-      <span class="bar-label">${k}</span>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${Math.round(v/maxC*100)}%;background:${cores[k]||'var(--ouro)'}"></div>
+  const kpiGrid = document.getElementById('kpiGrid');
+  if (kpiGrid) {
+    kpiGrid.innerHTML = `
+      <div class="kpi-card">
+        <div class="kpi-ico">🚗</div>
+        <div class="kpi-val">${totalEstoque}</div>
+        <div class="kpi-lbl">Total em estoque</div>
+        <div class="kpi-sub kpi-pos">▲ ${ativos.length} disponíveis</div>
       </div>
-      <span class="bar-val">${v}</span>
-    </div>`).join('');
-
-  // Tipo grid
-  const paleta = ['#C9A84C','#3498db','#2ecc71','#e74c3c','#9b59b6','#f39c12','#1abc9c'];
-  document.getElementById('chartTipo').innerHTML = Object.entries(s.porTipo).map(([k,v],i) => `
-    <div class="tipo-item">
-      <div class="tipo-dot" style="background:${paleta[i%paleta.length]}"></div>
-      <span class="tipo-nome">${k}</span>
-      <span class="tipo-qtd">${v}</span>
-    </div>`).join('');
-
-  // Mais vistos
-  document.getElementById('maisVistos').innerHTML = s.maisVistos.map((v,i) => `
-    <div class="mv-item">
-      <div class="mv-rank">${i+1}</div>
-      <div class="mv-info">
-        <div class="mv-nome">${v.nome}</div>
-        <div class="mv-marca">${v.marca}</div>
+      <div class="kpi-card">
+        <div class="kpi-ico">💰</div>
+        <div class="kpi-val">${formatarPreco(valorTotal)}</div>
+        <div class="kpi-lbl">Valor total do estoque</div>
+        <div class="kpi-sub">${vendidos.length} vendidos</div>
       </div>
-      <span class="mv-views">👁 ${v.visualizacoes}</span>
-    </div>`).join('');
-
-  // Leads recentes
-  const leads = DB.getLeads().slice(-4).reverse();
-  const badgeLead = s => ({ novo:'badge-novo', contato:'badge-cont', negociando:'badge-neg', concluido:'badge-conc' }[s]||'badge-novo');
-  document.getElementById('leadsRecentes').innerHTML = leads.map(l => {
-    const v = DB.getVeiculoById(l.veiculoId);
-    return `<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-      <div style="width:36px;height:36px;background:var(--esc3);border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:700;color:var(--ouro);flex-shrink:0">${l.nome.slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.83rem;font-weight:600">${l.nome}</div>
-        <div style="font-size:.72rem;color:var(--cinza)">${v ? v.nome : '—'}</div>
+      <div class="kpi-card">
+        <div class="kpi-ico">👁</div>
+        <div class="kpi-val">${totalViews}</div>
+        <div class="kpi-lbl">Total de visualizações</div>
+        <div class="kpi-sub kpi-pos">▲ No período</div>
       </div>
-      <span class="badge ${badgeLead(l.status)}">${l.status}</span>
-    </div>`;
-  }).join('') || '<p style="color:var(--cinza);font-size:.85rem">Nenhum lead ainda.</p>';
+      <div class="kpi-card">
+        <div class="kpi-ico">📋</div>
+        <div class="kpi-val">${leadsDoBanco.length}</div>
+        <div class="kpi-lbl">Leads cadastrados</div>
+        <div class="kpi-sub ${leadsNovos.length > 0 ? 'kpi-neg' : ''}">● ${leadsNovos.length} novos</div>
+      </div>
+    `;
+  }
+
+  const chartCombust = document.getElementById('chartCombust');
+  if (chartCombust) {
+    const contagemCombustivel = ativos.reduce((acc, v) => {
+      acc[v.combustivel] = (acc[v.combustivel] || 0) + 1;
+      return acc;
+    }, {});
+    
+    chartCombust.innerHTML = Object.entries(contagemCombustivel).map(([nome, qtd]) => {
+      const porcentagem = (qtd / ativos.length) * 100;
+      return `
+        <div class="bar-item">
+          <div class="bar-label"><span>${nome}</span><span>${qtd}</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: ${porcentagem}%; background: #c5a86d;"></div></div>
+        </div>`;
+    }).join('');
+  }
+
+  const chartTipo = document.getElementById('chartTipo');
+  if (chartTipo) {
+    const contagemTipo = ativos.reduce((acc, v) => {
+      acc[v.tipo] = (acc[v.tipo] || 0) + 1;
+      return acc;
+    }, {});
+    
+    chartTipo.innerHTML = Object.entries(contagemTipo).map(([nome, qtd]) => `
+      <div class="type-item">
+        <span class="dot"></span> ${nome}
+        <span class="type-val">${qtd}</span>
+      </div>`).join('');
+  }
 }
 
-function carregarVeiculosAdmin() {
-  fetch('api_carros.php')
-    .then(res => res.json())
-    .then(dados => {
-      veiculosDoBanco = dados;
-      renderTabelaVeiculos(); // Desenha a tabela após receber os dados
-      renderDashboard(); // Atualiza os números do dashboard
-    })
-    .catch(erro => console.error("Erro ao carregar veículos:", erro));
+function carregarDadosAdmin() {
+  Promise.all([
+    fetch('api_carros.php').then(res => res.json()),
+    fetch('api_leads.php').then(res => res.json())
+  ])
+  .then(([carros, leads]) => {
+    veiculosDoBanco = carros;
+    leadsDoBanco = leads;
+    
+    // Identifica qual página está ativa para renderizar os dados certos
+    const paginaAtiva = document.querySelector('.page.ativa').id;
+    if(paginaAtiva === 'page-dashboard') renderDashboard();
+    if(paginaAtiva === 'page-veiculos') renderTabelaVeiculos();
+    if(paginaAtiva === 'page-leads') renderTabelaLeads();
+  })
+  .catch(erro => console.error("Erro ao carregar os dados do painel:", erro));
 }
 
 // ── Tabela de veículos ────────────────────────────────
@@ -151,6 +165,8 @@ function renderTabelaVeiculos() {
   const badge = s => ({ disponivel:'<span class="badge badge-disp">Disponível</span>', reservado:'<span class="badge badge-res">Reservado</span>', vendido:'<span class="badge badge-vend">Vendido</span>' }[s]||s);
 
   const tbody = document.getElementById('tbodyVeiculos');
+  if (!tbody) return;
+
   tbody.innerHTML = lista.map(v => `
     <tr>
       <td><img class="td-img" src="${v.imagem}" alt="" loading="lazy"></td>
@@ -158,8 +174,8 @@ function renderTabelaVeiculos() {
         <div class="td-nome">${v.nome}</div>
         <div class="td-marca">${v.marca}</div>
       </td>
-      <td>${v.ano}<br><small style="color:var(--cinza)">${DB.formatarKm(v.km)}</small></td>
-      <td><strong style="color:var(--ouro)">${DB.formatarPreco(v.preco)}</strong></td>
+      <td>${v.ano}<br><small style="color:var(--cinza)">${formatarKm(v.km)}</small></td>
+      <td><strong style="color:var(--ouro)">${formatarPreco(v.preco)}</strong></td>
       <td>${badge(v.status)} ${v.destaque ? '<span class="badge" style="background:rgba(201,168,76,.1);color:var(--ouro);border:1px solid var(--borda);margin-left:.3rem">⭐</span>' : ''}</td>
       <td style="color:var(--cinza)">👁 ${v.visualizacoes||0}</td>
       <td>
@@ -174,30 +190,49 @@ function renderTabelaVeiculos() {
 }
 
 function excluirVeiculo(id) {
-  if (!confirm('Tem certeza que deseja excluir este veículo?')) return;
-  DB.deleteVeiculo(id);
-  renderTabelaVeiculos();
-  toast('🗑 Veículo excluído', 'erro');
+  if (!confirm('Tem certeza que deseja excluir este veículo? Essa ação não pode ser desfeita.')) return;
+
+  // Envia o ID para o PHP deletar do banco
+  fetch('api_excluir_carro.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: id })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.sucesso) {
+      toast('🗑 ' + data.mensagem, 'sucesso');
+      carregarDadosAdmin(); // Recarrega a tabela (o carro vai sumir na hora)
+    } else {
+      alert("❌ Erro: " + data.mensagem);
+    }
+  })
+  .catch(erro => {
+    console.error("Erro:", erro);
+    alert("❌ Falha ao se conectar com o servidor para excluir.");
+  });
 }
 
 // ── Tabela de leads ───────────────────────────────────
 function renderTabelaLeads() {
   const busca  = (document.getElementById('buscaLeads')?.value || '').toLowerCase();
   const status = document.getElementById('filtroStatusL')?.value || '';
-  let lista = DB.getLeads();
+  let lista = leadsDoBanco;
+  
   if (busca)  lista = lista.filter(l => `${l.nome} ${l.email}`.toLowerCase().includes(busca));
   if (status) lista = lista.filter(l => l.status === status);
 
-  const badgeMap = { novo:'badge-novo', contato:'badge-cont', negociando:'badge-neg', concluido:'badge-conc' };
   const tbody = document.getElementById('tbodyLeads');
+  if (!tbody) return;
+
   tbody.innerHTML = lista.map(l => {
-    const v = DB.getVeiculoById(l.veiculoId);
+    const v = veiculosDoBanco.find(carro => carro.id == l.veiculo_id);
     return `<tr>
       <td><strong>${l.nome}</strong></td>
-      <td><a href="tel:${l.tel}" style="color:var(--ouro)">${l.tel}</a><br><small style="color:var(--cinza)">${l.email}</small></td>
+      <td><a href="tel:${l.telefone}" style="color:var(--ouro)">${l.telefone}</a><br><small style="color:var(--cinza)">${l.email}</small></td>
       <td>${v ? v.nome : '—'}</td>
       <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--cinza)">${l.mensagem}</td>
-      <td style="white-space:nowrap;color:var(--cinza)">${l.data}</td>
+      <td style="white-space:nowrap;color:var(--cinza)">${l.data_criacao}</td>
       <td>
         <select class="select-sm" style="font-size:.7rem;padding:.3rem .5rem" onchange="mudarStatusLead(${l.id}, this.value)">
           ${['novo','contato','negociando','concluido'].map(s => `<option value="${s}" ${l.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
@@ -208,20 +243,20 @@ function renderTabelaLeads() {
       </td>
     </tr>`;
   }).join('');
+  
   document.getElementById('emptyLeads').style.display = lista.length ? 'none' : 'block';
   atualizarBadge();
 }
 
 function mudarStatusLead(id, status) {
-  DB.updateLeadStatus(id, status);
-  atualizarBadge();
-  toast('Status do lead atualizado');
+  // TODO: Criaremos o api_status_lead.php depois!
+  toast('O PHP de atualizar status ainda será criado!');
 }
+
 function excluirLead(id) {
   if (!confirm('Excluir este lead?')) return;
-  DB.deleteLead(id);
-  renderTabelaLeads();
-  toast('Lead excluído', 'erro');
+  // TODO: Criaremos o api_excluir_lead.php depois!
+  toast('O PHP de exclusão ainda será criado!', 'erro');
 }
 
 // ── Modal de veículo ──────────────────────────────────
@@ -232,8 +267,9 @@ function abrirModalVeiculo(id = null) {
   limparFormVeiculo();
 
   if (isEdicao) {
-    const v = DB.getVeiculoById(id);
+    const v = veiculosDoBanco.find(carro => carro.id == id);
     if (!v) return;
+    
     document.getElementById('vMarca').value          = v.marca;
     document.getElementById('vNome').value           = v.nome;
     document.getElementById('vTipo').value           = v.tipo;
@@ -248,7 +284,10 @@ function abrirModalVeiculo(id = null) {
     document.getElementById('vDestaque').checked     = v.destaque;
     document.getElementById('vImagem').value         = v.imagem;
     document.getElementById('vDescricao').value      = v.descricao;
-    document.getElementById('vCaracteristicas').value = v.caracteristicas;
+    
+    // Reconstrói as características separadas por vírgula para o input
+    document.getElementById('vCaracteristicas').value = v.caracteristicas ? v.caracteristicas.join(', ') : '';
+    
     previewImagem();
   }
 
@@ -276,8 +315,6 @@ function limparFormVeiculo() {
 function previewImagem() {
   const url = document.getElementById('vImagem').value.trim();
   const img = document.getElementById('previewImg');
-  
-  // Só tenta carregar a imagem se o texto começar com "http" (for um link real)
   if (url.startsWith('http')) { 
     img.src = url; 
     img.classList.add('show'); 
@@ -287,7 +324,7 @@ function previewImagem() {
 }
 
 function salvarVeiculo() {
-  // 1. Coleta todos os valores digitados nos inputs do HTML
+  const id = document.getElementById('veiculoId').value;
   const marca = document.getElementById('vMarca').value;
   const nome = document.getElementById('vNome').value;
   const tipo = document.getElementById('vTipo').value;
@@ -299,56 +336,49 @@ function salvarVeiculo() {
   const km = document.getElementById('vKm').value;
   const preco = document.getElementById('vPreco').value;
   const status = document.getElementById('vStatus').value;
-  const destaque = document.getElementById('vDestaque').checked; // Checkbox usa .checked
+  const destaque = document.getElementById('vDestaque').checked; 
   const imagem = document.getElementById('vImagem').value;
   const descricao = document.getElementById('vDescricao').value;
   const caracteristicas = document.getElementById('vCaracteristicas').value;
 
-  // 2. Validação simples (Garante que os campos com * foram preenchidos)
   if (!marca || !nome || !tipo || !ano || !combustivel || !cambio || km === '' || preco === '' || !imagem) {
     alert("⚠️ Por favor, preencha todos os campos obrigatórios (*).");
     return;
   }
 
-  // 3. Monta o objeto para enviar
-  const novoCarro = {
-    marca, nome, tipo, ano, cor, combustivel, cambio, potencia, km, preco, status, destaque, imagem, descricao, caracteristicas
+  const carroParaSalvar = {
+    id, marca, nome, tipo, ano, cor, combustivel, cambio, potencia, km, preco, status, destaque, imagem, descricao, caracteristicas
   };
 
-  // 4. Efeito visual no botão enquanto salva
   const btnSalvar = document.querySelector('.modal-footer .btn-ouro');
   const textoOriginal = btnSalvar.innerHTML;
   btnSalvar.innerHTML = '⏳ Salvando...';
   btnSalvar.disabled = true;
 
-  // 5. Envia os dados para o PHP
-  fetch('api_cadastrar_carro.php', {
+  // Se tem ID, vai para a API de edição (que criaremos). Se não, vai para a de cadastro!
+  const urlApi = id ? 'api_editar_carro.php' : 'api_cadastrar_carro.php';
+
+  fetch(urlApi, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(novoCarro)
+    body: JSON.stringify(carroParaSalvar)
   })
   .then(response => response.json())
   .then(data => {
     if (data.sucesso) {
-      // Usa sua função de toast existente para mostrar o sucesso
-      toast(data.mensagem || "Veículo cadastrado!", 'sucesso');
-      
-      // Fecha o modal
+      toast(data.mensagem || "Veículo salvo!", 'sucesso');
       fecharModal();
-      
-      
-      // DICA: Aqui você chamaria a função que recarrega a tabela de veículos
-      carregarVeiculosAdmin(); 
+      carregarDadosAdmin(); 
     } else {
       alert("❌ Erro no banco: " + data.mensagem);
     }
   })
   .catch(erro => {
     console.error("Erro na requisição:", erro);
-    alert("❌ Erro ao tentar se conectar com o servidor.");
+    // Se a api_editar_carro.php ainda não existir, vai cair aqui no erro 404 por enquanto
+    alert("❌ O arquivo PHP para esta ação ainda não foi criado ou falhou.");
   })
   .finally(() => {
-    // Volta o botão ao estado normal
     btnSalvar.innerHTML = textoOriginal;
     btnSalvar.disabled = false;
   });
@@ -359,5 +389,4 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
 });
 
 // ── Init ──────────────────────────────────────────────
-atualizarBadge();
-carregarVeiculosAdmin();
+carregarDadosAdmin();
