@@ -249,8 +249,41 @@ function renderTabelaLeads() {
 }
 
 function mudarStatusLead(id, status) {
-  // TODO: Criaremos o api_status_lead.php depois!
-  toast('O PHP de atualizar status ainda será criado!');
+  fetch('api_status_lead.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: id, status: status })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.sucesso) {
+      toast('✅ ' + data.mensagem, 'sucesso');
+      carregarDadosAdmin(); // Recarrega para atualizar a bolinha vermelha
+    } else {
+      alert("❌ Erro: " + data.mensagem);
+    }
+  })
+  .catch(erro => console.error("Erro:", erro));
+}
+
+function excluirLead(id) {
+  if (!confirm('Tem certeza que deseja excluir este lead?')) return;
+
+  fetch('api_excluir_lead.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: id })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.sucesso) {
+      toast('🗑 ' + data.mensagem, 'erro');
+      carregarDadosAdmin(); // Recarrega a tabela e some com o lead
+    } else {
+      alert("❌ Erro: " + data.mensagem);
+    }
+  })
+  .catch(erro => console.error("Erro:", erro));
 }
 
 function excluirLead(id) {
