@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="login.css">
-  </style>
 </head>
 <body>
 
@@ -63,15 +62,6 @@
       </button>
     </div>
 
-    <!-- Credenciais demo -->
-    <div class="demo-box" id="demoBox">
-      <p>🔑 Credenciais de demonstração</p>
-      <div class="demo-cred" id="demoCred">
-        <strong>E-mail:</strong> admin@autoelite.com<br>
-        <strong>Senha:</strong> admin123
-      </div>
-    </div>
-
     <!-- Formulário -->
     <div class="erro-msg" id="erroMsg">E-mail ou senha incorretos. Tente novamente.</div>
 
@@ -105,12 +95,48 @@
       </button>
     </form>
 
+    <!-- LINK PARA ABRIR O CADASTRO -->
+    <div style="text-align: center; margin-top: 1.5rem;">
+      <a href="#" onclick="abrirModalCadastro()" style="color: #aaa; text-decoration: none; font-size: 0.9rem; transition: color 0.3s;" onmouseover="this.style.color='#c5a86d'" onmouseout="this.style.color='#aaa'">Ainda não tem conta? <strong style="color: #c5a86d;">Cadastre-se</strong></a>
+    </div>
+
     <div class="login-footer">
-      <p>© 2025 AutoElite. Todos os direitos reservados.</p>
+      <p>© 2026 AutoElite. Todos os direitos reservados.</p>
     </div>
   </div>
 
-  <script src="db.js"></script>
+  <!-- ── MODAL DE CADASTRO ──── -->
+  <div class="modal-overlay" id="modalCadastro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; justify-content: center; align-items: center;">
+    <div class="modal" style="background: #111; padding: 2.5rem; border-radius: 8px; max-width: 400px; width: 90%; position: relative; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+      
+      <button type="button" onclick="fecharModalCadastro()" style="position: absolute; right: 15px; top: 15px; background: none; border: none; color: #888; cursor: pointer; font-size: 1.2rem;">✕</button>
+      
+      <h2 style="color: #c5a86d; margin-top: 0; margin-bottom: 0.5rem; font-family: 'Playfair Display', serif;">Criar Conta</h2>
+      <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 1.5rem;">Cadastre-se para acessar a vitrine exclusiva.</p>
+      
+      <form id="formCadastro" onsubmit="fazerCadastro(event)">
+        <div style="margin-bottom: 1rem;">
+          <label style="color: #ccc; display: block; margin-bottom: 5px; font-size: 0.85rem;">Nome completo *</label>
+          <input type="text" id="cadNome" placeholder="Ex: João da Silva" required style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+          <label style="color: #ccc; display: block; margin-bottom: 5px; font-size: 0.85rem;">E-mail *</label>
+          <input type="email" id="cadEmail" placeholder="seu@email.com" required style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="color: #ccc; display: block; margin-bottom: 5px; font-size: 0.85rem;">Senha *</label>
+          <input type="password" id="cadSenha" placeholder="Crie uma senha forte" required style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+        </div>
+        
+        <button type="submit" id="btnCadastrar" style="width: 100%; padding: 12px; background: #c5a86d; color: black; border: none; font-weight: 600; font-size: 1rem; border-radius: 4px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Cadastrar e Entrar</button>
+        
+        <p id="erroCadMsg" style="color: #ff4d4d; display: none; margin-top: 15px; font-size: 0.9rem; text-align: center; margin-bottom: 0;"></p>
+      </form>
+    </div>
+  </div>
+
   <script src="login-script.js"></script>
 </body>
 </html>
