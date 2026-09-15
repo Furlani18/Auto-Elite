@@ -4,9 +4,11 @@ let VEICULOS = [];
 const sessao = JSON.parse(localStorage.getItem('ae_sessao') || 'null');
 if (!sessao || sessao.role !== 'cliente') window.location.href = 'login.html';
 
-function sair() { 
-  localStorage.removeItem('ae_sessao'); 
-  window.location.href = 'login.html'; 
+function sair() {
+  fetch('api_logout.php', { method: 'POST' }).finally(() => {
+    localStorage.removeItem('ae_sessao');
+    window.location.href = 'login.html';
+  });
 }
 
 // ── Utilitários de Formatação ─────────────────────────
