@@ -1,38 +1,37 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 require 'conexao.php';
 
-// Busca todos os carros, ordenando dos mais recentes para os mais antigos
 $sql = "SELECT * FROM carros ORDER BY id DESC";
 $resultado = $conn->query($sql);
 $carros = array();
 
 if ($resultado && $resultado->num_rows > 0) {
     while($row = $resultado->fetch_assoc()) {
-        
-        // 🚨 MÁGICA AQUI: Força todos os nomes de colunas para minúsculo
         $row = array_change_key_case($row, CASE_LOWER);
-
-        // Agora podemos converter os dados com segurança
+        
         $row['preco'] = (float) $row['preco'];
         $row['km'] = (int) $row['km'];
         $row['ano'] = (int) $row['ano'];
         $row['destaque'] = $row['destaque'] == 1 ? true : false;
         
-        // Trata as características para o modal
         if (!empty($row['caracteristicas'])) {
             $row['caracteristicas'] = array_map('trim', explode(',', $row['caracteristicas']));
         } else {
             $row['caracteristicas'] = [];
         }
-
         $carros[] = $row;
     }
 }
 
-echo json_encode($carros);
+$json = json_encode($carros, JSON_UNESCAPED_UNICODE);
+
+// Evita tela branca: se o encode falhar, retorna o motivo em vez de nada
+if ($json === false) {
+    echo json_encode(["erro" => "Falha no JSON: " . json_last_error_msg()]);
+} else {
+    echo $json;
+}
+
 $conn->close();
 ?>
