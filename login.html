@@ -117,17 +117,17 @@
       <form id="formCadastro" onsubmit="fazerCadastro(event)">
         <div style="margin-bottom: 1rem;">
           <label style="color: #ccc; display: block; margin-bottom: 5px; font-size: 0.85rem;">Nome completo *</label>
-          <input type="text" id="cadNome" placeholder="Ex: João da Silva" required style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+          <input type="text" id="cadNome" placeholder="Ex: João da Silva" required autocomplete="name" style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
         </div>
         
         <div style="margin-bottom: 1rem;">
           <label style="color: #ccc; display: block; margin-bottom: 5px; font-size: 0.85rem;">E-mail *</label>
-          <input type="email" id="cadEmail" placeholder="seu@email.com" required style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+          <input type="email" id="cadEmail" placeholder="seu@email.com" required autocomplete="email" style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
         </div>
         
         <div style="margin-bottom: 1.5rem;">
           <label style="color: #ccc; display: block; margin-bottom: 5px; font-size: 0.85rem;">Senha *</label>
-          <input type="password" id="cadSenha" placeholder="Crie uma senha forte" required style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
+          <input type="password" id="cadSenha" placeholder="Crie uma senha forte" required autocomplete="new-password" style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">
         </div>
         
         <button type="submit" id="btnCadastrar" style="width: 100%; padding: 12px; background: #c5a86d; color: black; border: none; font-weight: 600; font-size: 1rem; border-radius: 4px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Cadastrar e Entrar</button>
