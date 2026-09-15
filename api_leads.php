@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 require 'conexao.php';
+require_once 'auth.php';
+exigirAdmin();
 
 // Busca todas as avaliações/leads, da mais nova para a mais antiga
 $sql = "SELECT * FROM avaliacao ORDER BY id DESC";
