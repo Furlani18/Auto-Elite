@@ -1,58 +1,53 @@
 <?php
 header('Content-Type: application/json');
 require 'conexao.php';
+require_once 'auth.php';
+exigirAdmin();
 
-// Recebe o JSON enviado pelo JavaScript
 $dados = json_decode(file_get_contents("php://input"));
 
-// Verifica se pelo menos o ID e os campos principais chegaram
-if (isset($dados->id) && isset($dados->marca) && isset($dados->nome)) {
-    $id = (int) $dados->id;
-    
-    // Escapando as strings para evitar falhas de segurança (SQL Injection)
-    $marca = $conn->real_escape_string($dados->marca);
-    $nome = $conn->real_escape_string($dados->nome);
-    $tipo = $conn->real_escape_string($dados->tipo);
-    $ano = (int) $dados->ano;
-    $cor = $conn->real_escape_string($dados->cor);
-    $combustivel = $conn->real_escape_string($dados->combustivel);
-    $cambio = $conn->real_escape_string($dados->cambio);
-    $potencia = $conn->real_escape_string($dados->potencia);
-    $km = (int) $dados->km;
-    $preco = (float) $dados->preco;
-    $status = $conn->real_escape_string($dados->status);
-    $destaque = $dados->destaque ? 1 : 0; // Converte booleano para 1 ou 0 do MySQL
-    $imagem = $conn->real_escape_string($dados->imagem);
-    $descricao = $conn->real_escape_string($dados->descricao);
-    $caracteristicas = $conn->real_escape_string($dados->caracteristicas);
-
-    // Monta a query de UPDATE com os dados novos
-    $sql = "UPDATE carros SET 
-            marca = '$marca', 
-            nome = '$nome', 
-            tipo = '$tipo', 
-            ano = $ano, 
-            cor = '$cor', 
-            combustivel = '$combustivel', 
-            cambio = '$cambio', 
-            potencia = '$potencia', 
-            km = $km, 
-            preco = $preco, 
-            status = '$status', 
-            destaque = $destaque, 
-            imagem = '$imagem', 
-            descricao = '$descricao', 
-            caracteristicas = '$caracteristicas' 
-            WHERE id = $id";
-
-    // Executa no banco e retorna o resultado
-    if ($conn->query($sql) === TRUE) {
-        echo json_encode(["sucesso" => true, "mensagem" => "Veículo atualizado com sucesso!"]);
-    } else {
-        echo json_encode(["sucesso" => false, "mensagem" => "Erro ao atualizar: " . $conn->error]);
+$obrigatorios = ['id', 'marca', 'nome', 'tipo', 'ano', 'combustivel', 'cambio', 'km', 'preco', 'imagem'];
+foreach ($obrigatorios as $campo) {
+    if (!isset($dados->$campo) || $dados->$campo === '') {
+        echo json_encode(["sucesso" => false, "mensagem" => "Campo obrigatório ausente: $campo."]);
+        exit;
     }
+}
+
+$id              = (int) $dados->id;
+$marca           = $dados->marca;
+$nome            = $dados->nome;
+$tipo            = $dados->tipo;
+$ano             = (int) $dados->ano;
+$cor             = $dados->cor ?? '';
+$combustivel     = $dados->combustivel;
+$cambio          = $dados->cambio;
+$potencia        = $dados->potencia ?? '';
+$km              = (int) $dados->km;
+$preco           = (float) $dados->preco;
+$status          = $dados->status ?? '';
+$destaque        = !empty($dados->destaque) ? 1 : 0;
+$imagem          = $dados->imagem;
+$descricao       = $dados->descricao ?? '';
+$caracteristicas = $dados->caracteristicas ?? '';
+
+$sql = "UPDATE carros SET
+            marca = ?, nome = ?, tipo = ?, ano = ?, cor = ?, combustivel = ?, cambio = ?,
+            potencia = ?, km = ?, preco = ?, status = ?, destaque = ?, imagem = ?,
+            descricao = ?, caracteristicas = ?
+        WHERE id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param(
+    "sssissssidsisssi",
+    $marca, $nome, $tipo, $ano, $cor, $combustivel, $cambio,
+    $potencia, $km, $preco, $status, $destaque, $imagem, $descricao, $caracteristicas, $id
+);
+
+if ($stmt->execute()) {
+    echo json_encode(["sucesso" => true, "mensagem" => "Veículo atualizado com sucesso!"]);
 } else {
-    echo json_encode(["sucesso" => false, "mensagem" => "Dados incompletos. ID, Marca e Nome são obrigatórios."]);
+    echo json_encode(["sucesso" => false, "mensagem" => "Erro ao atualizar: " . $stmt->error]);
 }
 
 $conn->close();
