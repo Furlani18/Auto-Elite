@@ -378,20 +378,52 @@ function initFormAvaliacao() {
   form.addEventListener('submit', e => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
+    const textoOriginal = btn.textContent;
     btn.textContent = 'Enviando...';
     btn.disabled = true;
 
-    setTimeout(() => {
-      btn.textContent = '✓ Solicitação enviada!';
-      btn.style.background = '#2ecc71';
-      form.reset();
-      mostrarToast('🎉 Entraremos em contato em breve!');
+    const nome = document.getElementById('avNome').value.trim();
+    const telefone = document.getElementById('avTelefone').value.trim();
+    const email = document.getElementById('avEmail').value.trim();
+    const marca = document.getElementById('avMarca').value.trim();
+    const modelo = document.getElementById('avModelo').value.trim();
+    const ano = document.getElementById('avAno').value.trim();
+    const km = document.getElementById('avKm').value.trim();
+    const condicao = document.getElementById('avCondicao').value;
+
+    const mensagem = `Solicitação de avaliação de veículo: ${marca} ${modelo} (${ano})`
+      + (km ? `, ${km}` : '')
+      + (condicao ? `. Condição: ${condicao}` : '');
+
+    fetch('api_avaliacoes.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, telefone, email, mensagem })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.sucesso) {
+        btn.textContent = '✓ Solicitação enviada!';
+        btn.style.background = '#2ecc71';
+        form.reset();
+        mostrarToast('🎉 Entraremos em contato em breve!');
+      } else {
+        btn.textContent = textoOriginal;
+        btn.disabled = false;
+        mostrarToast('❌ ' + (data.mensagem || 'Erro ao enviar. Tente novamente.'));
+        return;
+      }
       setTimeout(() => {
-        btn.textContent = 'Solicitar avaliação gratuita';
+        btn.textContent = textoOriginal;
         btn.style.background = '';
         btn.disabled = false;
       }, 4000);
-    }, 1800);
+    })
+    .catch(() => {
+      btn.textContent = textoOriginal;
+      btn.disabled = false;
+      mostrarToast('❌ Erro ao conectar com o servidor.');
+    });
   });
 }
 
