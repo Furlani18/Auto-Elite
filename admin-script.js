@@ -50,8 +50,10 @@ function irPara(pagina) {
 }
 
 function fazerLogout() {
-  localStorage.removeItem('ae_sessao');
-  window.location.href = 'login.html';
+  fetch('api_logout.php', { method: 'POST' }).finally(() => {
+    localStorage.removeItem('ae_sessao');
+    window.location.href = 'login.html';
+  });
 }
 
 // ── Toast ─────────────────────────────────────────────
@@ -284,12 +286,6 @@ function excluirLead(id) {
     }
   })
   .catch(erro => console.error("Erro:", erro));
-}
-
-function excluirLead(id) {
-  if (!confirm('Excluir este lead?')) return;
-  // TODO: Criaremos o api_excluir_lead.php depois!
-  toast('O PHP de exclusão ainda será criado!', 'erro');
 }
 
 // ── Modal de veículo ──────────────────────────────────
