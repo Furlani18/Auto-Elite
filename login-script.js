@@ -11,19 +11,6 @@ function selecionarRole(role) {
   roleSelecionada = role;
   document.getElementById('tabAdmin').classList.toggle('ativo', role === 'admin');
   document.getElementById('tabCliente').classList.toggle('ativo', role === 'cliente');
-
-  // Preenche demo 
-  // (⚠️ Lembre-se: para esses e-mails de teste funcionarem agora, você precisará cadastrá-los na sua tabela 'clientes' no MySQL!)
-  const credEl = document.getElementById('demoCred');
-  if (role === 'admin') {
-    credEl.innerHTML = '<strong>E-mail:</strong> admin@autoelite.com<br><strong>Senha:</strong> admin123';
-    document.getElementById('inputEmail').value = 'admin@autoelite.com';
-    document.getElementById('inputSenha').value = 'admin123';
-  } else {
-    credEl.innerHTML = '<strong>E-mail:</strong> cliente@email.com<br><strong>Senha:</strong> cliente123';
-    document.getElementById('inputEmail').value = 'cliente@email.com';
-    document.getElementById('inputSenha').value = 'cliente123';
-  }
   document.getElementById('erroMsg').classList.remove('show');
 }
 
