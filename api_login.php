@@ -2,23 +2,31 @@
 header('Content-Type: application/json');
 require 'conexao.php';
 
+session_start();
+
 $dados = json_decode(file_get_contents("php://input"));
 
 if (isset($dados->email) && isset($dados->senha)) {
-    $email = $conn->real_escape_string($dados->email);
+    $email = $dados->email;
     $senha_digitada = $dados->senha;
 
-    $sql = "SELECT * FROM clientes WHERE EMAIL = '$email'";
-    $resultado = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT * FROM clientes WHERE EMAIL = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     if ($resultado->num_rows > 0) {
         $usuario = $resultado->fetch_assoc();
-        
-        // Verifica a senha criptografada
-        if (password_verify($senha_digitada, $usuario['SENHA']) || $senha_digitada === $usuario['SENHA']) {
-            
+
+        if (password_verify($senha_digitada, $usuario['SENHA'])) {
+            $_SESSION['usuario'] = [
+                "id" => $usuario['ID'],
+                "email" => $usuario['EMAIL'],
+                "role" => $usuario['PERFIL'],
+            ];
+
             echo json_encode([
-                "sucesso" => true, 
+                "sucesso" => true,
                 "usuario" => [
                     "id" => $usuario['ID'],
                     "nome" => isset($usuario['NOME']) ? $usuario['NOME'] : 'Usuário',
