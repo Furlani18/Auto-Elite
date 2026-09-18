@@ -33,4 +33,3 @@ if ($dados) {
 }
 
 $conn->close();
-?>
