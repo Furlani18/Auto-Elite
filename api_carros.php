@@ -13,6 +13,7 @@ if ($resultado && $resultado->num_rows > 0) {
         $row['preco'] = (float) $row['preco'];
         $row['km'] = (int) $row['km'];
         $row['ano'] = (int) $row['ano'];
+        $row['views'] = (int) ($row['views'] ?? 0);
         $row['destaque'] = $row['destaque'] == 1 ? true : false;
         
         if (!empty($row['caracteristicas'])) {
@@ -34,4 +35,3 @@ if ($json === false) {
 }
 
 $conn->close();
-?>
