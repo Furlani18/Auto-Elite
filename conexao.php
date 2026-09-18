@@ -9,4 +9,3 @@ if ($conn->connect_error) {
 
 // Garante acentuação correta entre o ambiente local (XAMPP) e a hospedagem.
 $conn->set_charset("utf8mb4");
-?>
