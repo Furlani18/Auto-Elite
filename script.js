@@ -26,6 +26,8 @@ const formatarPreco = v =>
 const formatarKm = v =>
   v.toLocaleString('pt-BR') + ' km';
 
+const ehNovo = v => v.ano === new Date().getFullYear();
+
 function salvarFavoritos() {
   localStorage.setItem('ae_favoritos', JSON.stringify([...estado.favoritos]));
 }
@@ -93,7 +95,7 @@ function renderDestaques() {
         <div class="nome">${v.nome}</div>
         <div class="preco">${formatarPreco(v.preco)}</div>
       </div>
-      ${v.novo ? '<span class="tag tag-novo badge-destq">Novo</span>' : ''}
+      ${ehNovo(v) ? '<span class="tag tag-novo badge-destq">Novo</span>' : ''}
     </div>
   `).join('');
 }
@@ -172,22 +174,6 @@ function initFiltros() {
   document.getElementById('btnResetFiltros')?.addEventListener('click', resetarFiltros);
 }
 
-  // Busca
-  document.getElementById('buscaInput')?.addEventListener('input', e => {
-    estado.filtros.busca = e.target.value.toLowerCase();
-    aplicarFiltros();
-  });
-
-  // Ordenação
-  document.getElementById('ordenacao')?.addEventListener('change', e => {
-    estado.ordenacao = e.target.value;
-    aplicarFiltros();
-  });
-
-  // Reset
-  document.getElementById('btnResetFiltros')?.addEventListener('click', resetarFiltros);
-
-
 function atualizarLabelPreco(val) {
   document.getElementById('precoMaxLabel').textContent = formatarPreco(val);
 }
@@ -260,7 +246,7 @@ function renderVeiculos() {
       <div class="card-img-wrap">
         <img src="${v.imagem}" alt="${v.nome}" loading="lazy">
         <div class="card-tags">
-          ${v.novo     ? '<span class="tag tag-novo">Novo</span>' : ''}
+          ${ehNovo(v)  ? '<span class="tag tag-novo">Novo</span>' : ''}
           ${v.destaque ? '<span class="tag tag-destq">★ Destaque</span>' : ''}
         </div>
         <button class="card-fav ${estado.favoritos.has(v.id) ? 'ativo' : ''}"
@@ -317,6 +303,12 @@ function abrirModal(id) {
   if (!v) return;
   estado.modalAberto = id;
 
+  fetch('api_incrementar_view.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  }).catch(() => {});
+
   document.getElementById('modalImg').src = v.imagem;
   document.getElementById('modalImg').alt = v.nome;
   document.getElementById('modalMarca').textContent = v.marca;
@@ -348,7 +340,7 @@ function abrirModal(id) {
     const msg = encodeURIComponent(
       `Olá! Tenho interesse no ${v.nome} (${v.ano}) — ${formatarPreco(v.preco)}. Poderia me dar mais informações?`
     );
-    window.open(`https://wa.me/5511999999999?text=${msg}`, '_blank');
+    window.open(`https://wa.me/5516997709612?text=${msg}`, '_blank');
   };
 
   document.getElementById('modalOverlay').classList.add('open');
