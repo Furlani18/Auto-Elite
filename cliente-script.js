@@ -32,31 +32,23 @@ function toast(msg) {
 
 // ── Init filtros ──────────────────────────────────────
 function initFiltros() {
-  const selMarca = document.getElementById('filtroMarca');
-  const selTipo  = document.getElementById('filtroTipo');
-  const selComb  = document.getElementById('filtroComb');
-  const rangePreco = document.getElementById('filtroPreco');
+  const selMarca = document.getElementById('fMarca');
+  const selTipo  = document.getElementById('fTipo');
+  const rangePreco = document.getElementById('fPreco');
 
   const MARCAS = [...new Set(VEICULOS.map(v => v.marca))].filter(Boolean).sort();
   const TIPOS = [...new Set(VEICULOS.map(v => v.tipo))].filter(Boolean).sort();
-  const COMBUSTIVEIS = [...new Set(VEICULOS.map(v => v.combustivel))].filter(Boolean).sort();
 
   if(selMarca) {
-      selMarca.innerHTML = '<option value="">Todas as marcas</option>';
+      selMarca.innerHTML = '<option value="">Todas</option>';
       MARCAS.forEach(m => selMarca.innerHTML += `<option value="${m}">${m}</option>`);
       selMarca.addEventListener('change', () => { estado.filtros.marca = selMarca.value; renderCards(); });
   }
-  
+
   if(selTipo) {
-      selTipo.innerHTML  = '<option value="">Todos os tipos</option>';
+      selTipo.innerHTML  = '<option value="">Todos</option>';
       TIPOS.forEach(t  => selTipo.innerHTML  += `<option value="${t}">${t}</option>`);
       selTipo.addEventListener('change',  () => { estado.filtros.tipo  = selTipo.value;  renderCards(); });
-  }
-
-  if(selComb) {
-      selComb.innerHTML  = '<option value="">Todos</option>';
-      COMBUSTIVEIS.forEach(c => selComb.innerHTML += `<option value="${c}">${c}</option>`);
-      selComb.addEventListener('change',  () => { estado.filtros.combustivel = selComb.value; renderCards(); });
   }
 
   if(rangePreco) {
@@ -64,8 +56,8 @@ function initFiltros() {
       rangePreco.max = precoMax;
       rangePreco.value = precoMax;
       estado.filtros.precoMax = precoMax;
-      
-      const lbl = document.getElementById('precoMaxLabel');
+
+      const lbl = document.getElementById('labelPreco');
       if(lbl) lbl.textContent = formatarPreco(precoMax);
 
       rangePreco.addEventListener('input', () => {
@@ -76,56 +68,49 @@ function initFiltros() {
       });
   }
 
-  document.querySelectorAll('.chip[data-comb]').forEach(chip => {
+  document.querySelectorAll('#chipsCombus .chip[data-c]').forEach(chip => {
     chip.addEventListener('click', () => {
-      const val = chip.dataset.comb;
-      document.querySelectorAll('.chip[data-comb]').forEach(c => c.classList.remove('ativo'));
+      const val = chip.dataset.c;
+      document.querySelectorAll('#chipsCombus .chip[data-c]').forEach(c => c.classList.remove('on'));
       if (estado.filtros.combustivel === val) {
         estado.filtros.combustivel = '';
-        if(selComb) selComb.value = '';
       } else {
-        chip.classList.add('ativo');
+        chip.classList.add('on');
         estado.filtros.combustivel = val;
-        if(selComb) selComb.value = val;
       }
       renderCards();
     });
   });
 
-  document.getElementById('buscaInput')?.addEventListener('input', e => {
+  document.getElementById('busca')?.addEventListener('input', e => {
     estado.filtros.busca = e.target.value.toLowerCase();
     renderCards();
   });
 
-  document.getElementById('ordenacao')?.addEventListener('change', e => {
-    estado.ordenacao = e.target.value;
-    renderCards();
-  });
-
-  document.getElementById('btnResetFiltros')?.addEventListener('click', resetarFiltros);
+  document.getElementById('ordem')?.addEventListener('change', renderCards);
 }
 
 function resetarFiltros() {
-  const fPreco = document.getElementById('filtroPreco');
+  const fPreco = document.getElementById('fPreco');
   estado.filtros = { busca: '', marca: '', tipo: '', combustivel: '', precoMax: fPreco ? +fPreco.max : 900000 };
-  
-  if(document.getElementById('buscaInput')) document.getElementById('buscaInput').value = '';
-  if(document.getElementById('filtroMarca')) document.getElementById('filtroMarca').value = '';
-  if(document.getElementById('filtroTipo')) document.getElementById('filtroTipo').value  = '';
+
+  if(document.getElementById('busca')) document.getElementById('busca').value = '';
+  if(document.getElementById('fMarca')) document.getElementById('fMarca').value = '';
+  if(document.getElementById('fTipo')) document.getElementById('fTipo').value  = '';
   if(fPreco) fPreco.value = fPreco.max;
-  
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('ativo'));
-  
-  const lbl = document.getElementById('precoMaxLabel');
+
+  document.querySelectorAll('#chipsCombus .chip').forEach(c => c.classList.remove('on'));
+
+  const lbl = document.getElementById('labelPreco');
   if(lbl && fPreco) lbl.textContent = formatarPreco(fPreco.max);
-  
+
   renderCards();
 }
 
 // ── Render ────────────────────────────────────────────
 function renderCards() {
   const { busca, marca, tipo, combustivel, precoMax } = estado.filtros;
-  const ordem = document.getElementById('ordenacao')?.value || '';
+  const ordem = document.getElementById('ordem')?.value || '';
   
   // Lê direto da nossa variável populada pelo banco
   let lista = VEICULOS.filter(v => v.status !== 'vendido');
@@ -204,8 +189,14 @@ function abrirDetalhe(id) {
   if (!v) return;
   estado.veiculoAtivo = id;
 
+  fetch('api_incrementar_view.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  }).catch(() => {});
+
   const mImg = document.getElementById('modalImg') || document.getElementById('mImg');
-  if(mImg) mImg.src = v.imagem;
+  if(mImg) { mImg.src = v.imagem; mImg.alt = v.nome; }
   
   const mMarca = document.getElementById('modalMarca') || document.getElementById('mMarca');
   if(mMarca) mMarca.textContent = v.marca;
