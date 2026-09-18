@@ -6,28 +6,7 @@
    ============================================================ */
 
 /* ─── Reset & Base ────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --preto:    #0F0F0F;
-  --escuro:   #1A1A1A;
-  --escuro2:  #242424;
-  --ouro:     #C9A84C;
-  --ouro-clr: #E8C96A;
-  --branco:   #FFFFFF;
-  --cinza:    #6B6B6B;
-  --claro:    #F5F5F5;
-  --borda:    rgba(201,168,76,.18);
-
-  --ff-display: 'Playfair Display', Georgia, serif;
-  --ff-body:    'Inter', system-ui, sans-serif;
-
-  --r: .5rem;
-  --r-lg: 1rem;
-  --shadow: 0 4px 24px rgba(0,0,0,.45);
-  --shadow-card: 0 8px 40px rgba(0,0,0,.55);
-  --trans: .3s cubic-bezier(.4,0,.2,1);
-}
+/* Tokens de cor/tipografia/transição ficam em variaveis.css */
 
 html { scroll-behavior: smooth; font-size: 16px; }
 
@@ -347,7 +326,6 @@ a   { color: inherit; text-decoration: none; }
   overflow: hidden;
   aspect-ratio: 4/3;
   cursor: pointer;
-  group: '';
 }
 .destaque-card img {
   width: 100%; height: 100%;
