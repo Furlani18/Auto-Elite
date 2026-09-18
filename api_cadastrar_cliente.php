@@ -31,4 +31,3 @@ if (isset($dados->nome) && isset($dados->email) && isset($dados->senha)) {
 }
 
 $conn->close();
-?>
