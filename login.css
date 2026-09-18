@@ -206,7 +206,7 @@ body {
   color: var(--cinza);
 }
 .check-wrap input[type="checkbox"] { accent-color: var(--ouro); }
-.link-esqueci { font-size: .82rem; color: var(--ouro); cursor: pointer; }
+.link-esqueci { font-size: .82rem; color: var(--ouro); cursor: pointer; text-decoration: none; }
 .link-esqueci:hover { text-decoration: underline; }
 
 .btn-entrar {
