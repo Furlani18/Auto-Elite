@@ -1,18 +1,4 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --preto:  #0F0F0F;
-  --escuro: #1A1A1A;
-  --esc2:   #222222;
-  --ouro:   #C9A84C;
-  --ouro-l: #E8C96A;
-  --branco: #FFFFFF;
-  --cinza:  #6B6B6B;
-  --borda:  rgba(201,168,76,.18);
-  --ff-d:   'Playfair Display', Georgia, serif;
-  --ff-b:   'Inter', system-ui, sans-serif;
-  --trans:  .3s cubic-bezier(.4,0,.2,1);
-}
+/* Tokens de cor/tipografia/transição ficam em variaveis.css */
 
 html, body { height: 100%; }
 
@@ -269,29 +255,6 @@ body {
   text-align: center;
 }
 .login-footer p { font-size: .78rem; color: rgba(255,255,255,.3); }
-
-/* Credenciais demo */
-.demo-box {
-  background: rgba(201,168,76,.06);
-  border: 1px solid var(--borda);
-  border-radius: .5rem;
-  padding: .9rem 1rem;
-  margin-bottom: 1.5rem;
-}
-.demo-box p {
-  font-size: .73rem;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ouro);
-  margin-bottom: .5rem;
-}
-.demo-cred {
-  font-size: .8rem;
-  color: rgba(255,255,255,.5);
-  line-height: 1.7;
-}
-.demo-cred strong { color: rgba(255,255,255,.75); }
 
 /* Responsive */
 @media (max-width: 900px) {
