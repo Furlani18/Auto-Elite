@@ -1,3 +1,5 @@
 config.php
+mail_config.php
+uploads/
 .vscode/
 .claude/
