@@ -83,25 +83,25 @@ function renderDashboard() {
         <div class="kpi-ico">🚗</div>
         <div class="kpi-val">${totalEstoque}</div>
         <div class="kpi-lbl">Total em estoque</div>
-        <div class="kpi-sub kpi-pos">▲ ${ativos.length} disponíveis</div>
+        <div class="kpi-delta delta-pos">▲ ${ativos.length} disponíveis</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-ico">💰</div>
         <div class="kpi-val">${formatarPreco(valorTotal)}</div>
         <div class="kpi-lbl">Valor total do estoque</div>
-        <div class="kpi-sub">${vendidos.length} vendidos</div>
+        <div class="kpi-delta">${vendidos.length} vendidos</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-ico">👁</div>
         <div class="kpi-val">${totalViews}</div>
         <div class="kpi-lbl">Total de visualizações</div>
-        <div class="kpi-sub kpi-pos">▲ No período</div>
+        <div class="kpi-delta delta-pos">▲ No período</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-ico">📋</div>
         <div class="kpi-val">${leadsDoBanco.length}</div>
         <div class="kpi-lbl">Leads cadastrados</div>
-        <div class="kpi-sub ${leadsNovos.length > 0 ? 'kpi-neg' : ''}">● ${leadsNovos.length} novos</div>
+        <div class="kpi-delta ${leadsNovos.length > 0 ? 'delta-neg' : ''}">● ${leadsNovos.length} novos</div>
       </div>
     `;
   }
@@ -129,13 +129,76 @@ function renderDashboard() {
       acc[v.tipo] = (acc[v.tipo] || 0) + 1;
       return acc;
     }, {});
-    
-    chartTipo.innerHTML = Object.entries(contagemTipo).map(([nome, qtd]) => `
-      <div class="type-item">
-        <span class="dot"></span> ${nome}
-        <span class="type-val">${qtd}</span>
+    const CORES_TIPO = ['#c9a84c', '#3498db', '#2ecc71', '#f39c12', '#e74c3c', '#9b59b6'];
+
+    chartTipo.innerHTML = Object.entries(contagemTipo).map(([nome, qtd], i) => `
+      <div class="tipo-item">
+        <span class="tipo-dot" style="background:${CORES_TIPO[i % CORES_TIPO.length]}"></span>
+        <span class="tipo-nome">${nome}</span>
+        <span class="tipo-qtd">${qtd}</span>
       </div>`).join('');
   }
+
+  renderMaisVistos();
+  renderLeadsRecentes();
+}
+
+// ── Mais visualizados ──────────────────────────────────
+function renderMaisVistos() {
+  const el = document.getElementById('maisVistos');
+  if (!el) return;
+
+  const top = [...veiculosDoBanco]
+    .filter(v => (v.views || 0) > 0)
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 5);
+
+  if (!top.length) {
+    el.innerHTML = `<div class="empty-state"><div class="ico">👁</div><h3>Nenhuma visualização ainda</h3></div>`;
+    return;
+  }
+
+  el.innerHTML = top.map((v, i) => `
+    <div class="mv-item">
+      <div class="mv-rank">${i + 1}</div>
+      <div class="mv-info">
+        <div class="mv-nome">${v.nome}</div>
+        <div class="mv-marca">${v.marca}</div>
+      </div>
+      <div class="mv-views">👁 ${v.views}</div>
+    </div>`).join('');
+}
+
+// ── Leads recentes ──────────────────────────────────────
+function renderLeadsRecentes() {
+  const el = document.getElementById('leadsRecentes');
+  if (!el) return;
+
+  const STATUS_BADGE = {
+    novo: ['badge-novo', 'Novo'],
+    contato: ['badge-cont', 'Contato'],
+    negociando: ['badge-neg', 'Negociando'],
+    concluido: ['badge-conc', 'Concluído'],
+  };
+
+  const recentes = leadsDoBanco.slice(0, 5);
+
+  if (!recentes.length) {
+    el.innerHTML = `<div class="empty-state"><div class="ico">📋</div><h3>Nenhum lead ainda</h3></div>`;
+    return;
+  }
+
+  el.innerHTML = recentes.map(l => {
+    const [classe, label] = STATUS_BADGE[l.status] || ['badge-novo', l.status];
+    return `
+    <div class="mv-item">
+      <div class="mv-info">
+        <div class="mv-nome">${l.nome}</div>
+        <div class="mv-marca">${l.telefone || l.email || ''}</div>
+      </div>
+      <span class="badge ${classe}">${label}</span>
+    </div>`;
+  }).join('');
 }
 
 function carregarDadosAdmin() {
@@ -179,7 +242,7 @@ function renderTabelaVeiculos() {
       <td>${v.ano}<br><small style="color:var(--cinza)">${formatarKm(v.km)}</small></td>
       <td><strong style="color:var(--ouro)">${formatarPreco(v.preco)}</strong></td>
       <td>${badge(v.status)} ${v.destaque ? '<span class="badge" style="background:rgba(201,168,76,.1);color:var(--ouro);border:1px solid var(--borda);margin-left:.3rem">⭐</span>' : ''}</td>
-      <td style="color:var(--cinza)">👁 ${v.visualizacoes||0}</td>
+      <td style="color:var(--cinza)">👁 ${v.views||0}</td>
       <td>
         <div class="td-acoes">
           <button class="btn btn-ghost btn-xs" onclick="editarVeiculo(${v.id})">✏ Editar</button>
