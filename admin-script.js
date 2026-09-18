@@ -56,6 +56,21 @@ function fazerLogout() {
   });
 }
 
+function fazerBackupAgora(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnBackupAgora');
+  const textoOriginal = btn.innerHTML;
+  btn.innerHTML = '<span class="nav-ico">⏳</span> Enviando...';
+
+  fetch('api_backup.php', { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+      toast(data.sucesso ? '✅ ' + data.mensagem : '❌ ' + data.mensagem, data.sucesso ? 'sucesso' : 'erro');
+    })
+    .catch(() => toast('❌ Erro ao conectar com o servidor.', 'erro'))
+    .finally(() => { btn.innerHTML = textoOriginal; });
+}
+
 // ── Toast ─────────────────────────────────────────────
 function toast(msg, tipo = '') {
   const el = document.getElementById('toast');

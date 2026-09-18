@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require 'conexao.php';
+require_once 'backup_helper.php';
 
 session_start();
 
@@ -35,6 +36,17 @@ if (isset($dados->email) && isset($dados->senha)) {
                     "avatar" => "👤"
                 ]
             ]);
+
+            // Aproveita o login do admin pra manter o backup diário em dia
+            if ($usuario['PERFIL'] === 'admin') {
+                if (function_exists('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
+                } else {
+                    @ob_end_flush();
+                    @flush();
+                }
+                backupDiarioSeNecessario($conn);
+            }
         } else {
             echo json_encode(["sucesso" => false, "mensagem" => "Senha incorreta."]);
         }
