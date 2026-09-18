@@ -22,4 +22,3 @@ if (isset($dados->id)) {
 }
 
 $conn->close();
-?>
