@@ -22,4 +22,3 @@ if (isset($dados->id) && isset($dados->status)) {
     echo json_encode(["sucesso" => false, "mensagem" => "Dados incompletos."]);
 }
 $conn->close();
-?>
