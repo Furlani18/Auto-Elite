@@ -5,3 +5,4 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'AUTOELITE_DB');
+define('BACKUP_SECRET', 'gere-uma-string-aleatoria-e-longa-aqui');
