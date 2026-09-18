@@ -1,14 +1,4 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --preto:  #0F0F0F; --escuro: #161616; --esc2: #1E1E1E; --esc3: #252525;
-  --ouro:   #C9A84C; --ouro-l: #E8C96A; --branco: #FFFFFF;
-  --cinza:  #6B6B6B; --cinza-l: #999; --borda: rgba(201,168,76,.15);
-  --verde:  #2ecc71; --azul: #3498db; --vermelho: #e74c3c; --laranja: #f39c12;
-  --ff-d: 'Playfair Display', Georgia, serif;
-  --ff-b: 'Inter', system-ui, sans-serif;
-  --trans: .25s cubic-bezier(.4,0,.2,1);
-  --sidebar-w: 240px;
-}
+/* Tokens de cor/tipografia/transição ficam em variaveis.css */
 html, body { height: 100%; }
 body { font-family: var(--ff-b); background: var(--preto); color: var(--branco); display: flex; overflow: hidden; }
 
