@@ -21,4 +21,3 @@ if (isset($dados->id)) {
     echo json_encode(["sucesso" => false, "mensagem" => "Nenhum ID fornecido."]);
 }
 $conn->close();
-?>
