@@ -4,9 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AutoElite — Vitrine</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="variaveis.css">
   <link rel="stylesheet" href="cliente.css">
 </head>
 <body>
@@ -45,33 +48,33 @@
 
       <div class="fg">
         <label>Buscar</label>
-        <input type="text" id="busca" placeholder="Marca, modelo, tipo..." oninput="renderCards()">
+        <input type="text" id="busca" placeholder="Marca, modelo, tipo...">
       </div>
       <div class="fg">
         <label>Marca</label>
-        <select id="fMarca" onchange="renderCards()">
+        <select id="fMarca">
           <option value="">Todas</option>
         </select>
       </div>
       <div class="fg">
         <label>Tipo</label>
-        <select id="fTipo" onchange="renderCards()">
+        <select id="fTipo">
           <option value="">Todos</option>
         </select>
       </div>
       <div class="fg">
         <label>Combustível</label>
         <div class="chips" id="chipsCombus">
-          <button class="chip" data-c="Gasolina" onclick="toggleChip(this,'combustivel')">⛽ Gasolina</button>
-          <button class="chip" data-c="Híbrido"  onclick="toggleChip(this,'combustivel')">⚡ Híbrido</button>
-          <button class="chip" data-c="Elétrico" onclick="toggleChip(this,'combustivel')">🔋 Elétrico</button>
-          <button class="chip" data-c="Flex"     onclick="toggleChip(this,'combustivel')">🌿 Flex</button>
+          <button class="chip" data-c="Gasolina">⛽ Gasolina</button>
+          <button class="chip" data-c="Híbrido">⚡ Híbrido</button>
+          <button class="chip" data-c="Elétrico">🔋 Elétrico</button>
+          <button class="chip" data-c="Flex">🌿 Flex</button>
         </div>
       </div>
       <div class="fg">
         <label>Preço máximo</label>
         <div class="range-wrap">
-          <input type="range" id="fPreco" min="50000" step="10000" oninput="renderCards();atualizarPrecoLabel()">
+          <input type="range" id="fPreco" min="50000" step="10000">
         </div>
         <div class="range-labels">
           <span>R$ 50.000</span>
@@ -87,7 +90,7 @@
         <div class="resultados-info"><strong id="totalResultados">0</strong> veículos encontrados</div>
         <div class="sort-wrap">
           <label>Ordenar</label>
-          <select id="ordem" onchange="renderCards()">
+          <select id="ordem">
             <option value="destaque">Destaque</option>
             <option value="preco_asc">Menor preço</option>
             <option value="preco_desc">Maior preço</option>
