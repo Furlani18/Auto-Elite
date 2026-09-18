@@ -1,10 +1,22 @@
 let roleSelecionada = 'admin';
 
+// Token de redefinição de senha, se o usuário chegou aqui pelo link do e-mail
+const tokenReset = new URLSearchParams(window.location.search).get('reset');
+
 // 1. Redireciona se já estiver logado (usando o LocalStorage padrão do navegador)
+// — mas não se ele chegou aqui pra redefinir a senha
 const sessaoStr = localStorage.getItem('ae_sessao');
-if (sessaoStr) {
+if (sessaoStr && !tokenReset) {
   const sessao = JSON.parse(sessaoStr);
   window.location.href = sessao.role === 'admin' ? 'admin.html' : 'cliente.html';
+}
+
+if (tokenReset) {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('modalRedefinir').style.display = 'flex';
+    document.getElementById('modalRedefinir').style.alignItems = 'center';
+    document.getElementById('modalRedefinir').style.justifyContent = 'center';
+  });
 }
 
 function selecionarRole(role) {
@@ -141,5 +153,93 @@ function fazerCadastro(e) {
   .finally(() => {
     btn.disabled = false;
     btn.textContent = 'Cadastrar e Entrar';
+  });
+}
+
+
+/* ─── ESQUECI MINHA SENHA ─────────────────────────────────── */
+function abrirModalEsqueci(e) {
+  e.preventDefault();
+  const modal = document.getElementById('modalEsqueci');
+  modal.style.display = 'flex';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+}
+
+function fecharModalEsqueci() {
+  document.getElementById('modalEsqueci').style.display = 'none';
+}
+
+function fazerSolicitarReset(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('esqEmail').value.trim();
+  const btn = document.getElementById('btnEsqueci');
+  const msg = document.getElementById('msgEsqueci');
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  msg.style.display = 'none';
+
+  fetch('api_solicitar_reset.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    msg.textContent = data.mensagem;
+    msg.style.display = 'block';
+  })
+  .catch(() => {
+    msg.textContent = '❌ Erro ao conectar com o servidor.';
+    msg.style.display = 'block';
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = 'Enviar link';
+  });
+}
+
+/* ─── DEFINIR NOVA SENHA (via link do e-mail) ────────────── */
+function fazerRedefinirSenha(e) {
+  e.preventDefault();
+
+  const novaSenha = document.getElementById('novaSenha').value;
+  const confirmarSenha = document.getElementById('confirmarSenha').value;
+  const btn = document.getElementById('btnRedefinir');
+  const msg = document.getElementById('msgRedefinir');
+
+  if (novaSenha !== confirmarSenha) {
+    msg.textContent = '❌ As senhas não coincidem.';
+    msg.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  msg.style.display = 'none';
+
+  fetch('api_redefinir_senha.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: tokenReset, novaSenha })
+  })
+  .then(res => res.json())
+  .then(data => {
+    msg.textContent = data.mensagem;
+    msg.style.display = 'block';
+    if (data.sucesso) {
+      btn.style.display = 'none';
+      setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+    }
+  })
+  .catch(() => {
+    msg.textContent = '❌ Erro ao conectar com o servidor.';
+    msg.style.display = 'block';
+  })
+  .finally(() => {
+    btn.disabled = false;
+    if (btn.style.display !== 'none') btn.textContent = 'Salvar nova senha';
   });
 }
