@@ -46,4 +46,3 @@ if (isset($dados->email) && isset($dados->senha)) {
 }
 
 $conn->close();
-?>
