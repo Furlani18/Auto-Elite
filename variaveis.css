@@ -1,0 +1,46 @@
+/* ============================================================
+   AutoElite — Tokens visuais compartilhados
+   Fonte única da paleta/tipografia usada por style.css, admin.css,
+   login.css e cliente.css. Mantém os dois esquemas de nomes que já
+   existiam nesses arquivos (ex: --escuro2 e --esc2) como aliases do
+   mesmo valor, pra evitar precisar reescrever cada var(--x) neles.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --preto:    #0F0F0F;
+  --escuro:   #1A1A1A;
+  --escuro2:  #242424;
+  --esc2:     #242424;
+  --escuro3:  #252525;
+  --esc3:     #252525;
+
+  --ouro:     #C9A84C;
+  --ouro-clr: #E8C96A;
+  --ouro-l:   #E8C96A;
+
+  --branco:   #FFFFFF;
+  --cinza:    #6B6B6B;
+  --cinza-l:  #999999;
+  --claro:    #F5F5F5;
+  --borda:    rgba(201,168,76,.18);
+
+  --verde:    #2ecc71;
+  --azul:     #3498db;
+  --vermelho: #e74c3c;
+  --laranja:  #f39c12;
+
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-body:    'Inter', system-ui, sans-serif;
+  --ff-d: var(--ff-display);
+  --ff-b: var(--ff-body);
+
+  --r:    .5rem;
+  --r-lg: 1rem;
+  --shadow:      0 4px 24px rgba(0,0,0,.45);
+  --shadow-card: 0 8px 40px rgba(0,0,0,.55);
+  --trans: .3s cubic-bezier(.4,0,.2,1);
+
+  --sidebar-w: 240px;
+}
