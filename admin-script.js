@@ -401,18 +401,52 @@ function limparFormVeiculo() {
   });
   document.getElementById('vStatus').value   = 'disponivel';
   document.getElementById('vDestaque').checked = false;
+  document.getElementById('vImagemArquivo').value = '';
   document.getElementById('previewImg').classList.remove('show');
 }
 
 function previewImagem() {
   const url = document.getElementById('vImagem').value.trim();
   const img = document.getElementById('previewImg');
-  if (url.startsWith('http')) { 
-    img.src = url; 
-    img.classList.add('show'); 
-  } else { 
-    img.classList.remove('show'); 
+  if (url) {
+    img.src = url;
+    img.classList.add('show');
+  } else {
+    img.classList.remove('show');
   }
+}
+
+function uploadImagem() {
+  const input = document.getElementById('vImagemArquivo');
+  const arquivo = input.files[0];
+  if (!arquivo) return;
+
+  const formData = new FormData();
+  formData.append('imagem', arquivo);
+
+  const campoUrl = document.getElementById('vImagem');
+  campoUrl.disabled = true;
+  campoUrl.placeholder = 'Enviando imagem...';
+
+  fetch('api_upload_imagem.php', { method: 'POST', body: formData })
+    .then(res => res.json())
+    .then(data => {
+      if (data.sucesso) {
+        campoUrl.value = data.url;
+        previewImagem();
+      } else {
+        alert('❌ ' + data.mensagem);
+        input.value = '';
+      }
+    })
+    .catch(() => {
+      alert('❌ Falha ao enviar a imagem.');
+      input.value = '';
+    })
+    .finally(() => {
+      campoUrl.disabled = false;
+      campoUrl.placeholder = 'ou cole uma URL de imagem';
+    });
 }
 
 function salvarVeiculo() {
