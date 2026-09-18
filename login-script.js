@@ -12,11 +12,10 @@ if (sessaoStr && !tokenReset) {
 }
 
 if (tokenReset) {
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('modalRedefinir').style.display = 'flex';
-    document.getElementById('modalRedefinir').style.alignItems = 'center';
-    document.getElementById('modalRedefinir').style.justifyContent = 'center';
-  });
+  const modalRedefinir = document.getElementById('modalRedefinir');
+  modalRedefinir.style.display = 'flex';
+  modalRedefinir.style.alignItems = 'center';
+  modalRedefinir.style.justifyContent = 'center';
 }
 
 function selecionarRole(role) {
