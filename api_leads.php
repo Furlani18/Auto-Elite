@@ -18,4 +18,3 @@ if ($resultado && $resultado->num_rows > 0) {
 
 echo json_encode($leads);
 $conn->close();
-?>
