@@ -14,8 +14,10 @@
 </head>
 <body>
 
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="fecharSidebar()"></div>
+
   <!-- ═══ SIDEBAR ══════════════════════════════════════════ -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="ico">🏎</div>
       Auto<span>Elite</span>
@@ -60,9 +62,12 @@
   <!-- ═══ MAIN ══════════════════════════════════════════════ -->
   <div class="main">
     <div class="topbar">
-      <div>
-        <div class="topbar-titulo" id="topbarTitulo">Dashboard</div>
-        <div class="topbar-sub" id="topbarSub">Visão geral do sistema</div>
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <button class="admin-hamburger" id="adminHamburger" onclick="abrirSidebar()" aria-label="Abrir menu">☰</button>
+        <div>
+          <div class="topbar-titulo" id="topbarTitulo">Dashboard</div>
+          <div class="topbar-sub" id="topbarSub">Visão geral do sistema</div>
+        </div>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-ouro" onclick="abrirModalVeiculo()">+ Novo veículo</button>

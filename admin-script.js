@@ -47,6 +47,18 @@ function irPara(pagina) {
   if (pagina === 'dashboard') renderDashboard();
   if (pagina === 'veiculos')  renderTabelaVeiculos();
   if (pagina === 'leads')     renderTabelaLeads();
+
+  fecharSidebar();
+}
+
+function abrirSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+}
+
+function fecharSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
 }
 
 function fazerLogout() {
