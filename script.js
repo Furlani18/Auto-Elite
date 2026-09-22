@@ -286,6 +286,7 @@ function renderVeiculos() {
 /* ─── Favoritos ───────────────────────────────────────────── */
 function toggleFav(e, id) {
   e.stopPropagation();
+  id = String(id); // a API entrega os ids como string; normaliza pra bater com o Set
   if (estado.favoritos.has(id)) {
     estado.favoritos.delete(id);
     mostrarToast('Removido dos favoritos');
@@ -299,6 +300,7 @@ function toggleFav(e, id) {
 
 /* ─── Modal de detalhe ────────────────────────────────────── */
 function abrirModal(id) {
+  id = String(id); // a API entrega os ids como string; normaliza pra comparar certo
   const v = VEICULOS.find(x => x.id === id);
   if (!v) return;
   estado.modalAberto = id;

@@ -1074,6 +1074,7 @@ input[type="range"]::-webkit-slider-thumb {
   .navbar { padding: 1rem 1.5rem; }
   .navbar.scrolled { padding: .75rem 1.5rem; }
   .nav-links, .nav-tel { display: none; }
+  .nav-actions .btn { display: none; }
   .nav-hamburger { display: flex; }
 
   .hero-content { padding: 0 1.5rem; }
@@ -1137,6 +1138,8 @@ input[type="range"]::-webkit-slider-thumb {
   transition: color var(--trans);
 }
 .nav-mobile ul li a:hover { color: var(--ouro); }
+.nav-mobile-actions { display: flex; flex-direction: column; gap: .6rem; margin-top: .5rem; }
+.nav-mobile-actions .btn { width: 100%; justify-content: center; }
 .nav-mobile-tel {
   margin-top: auto;
   font-size: .85rem;
