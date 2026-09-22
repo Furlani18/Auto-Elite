@@ -331,6 +331,9 @@ input[type="range"]::-webkit-slider-thumb {
 }
 @media (max-width: 600px) {
   .main-layout { padding: 1.25rem 1rem; }
-  .topbar { padding: .75rem 1.25rem; }
+  .topbar { padding: .75rem 1rem; }
+  .logo { font-size: 1.1rem; gap: .5rem; }
+  .topbar-right { gap: .5rem; }
+  .user-chip span { display: none; }
   .hero-text { padding: 1.75rem 1.5rem; }
 }
