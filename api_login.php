@@ -39,12 +39,6 @@ if (isset($dados->email) && isset($dados->senha)) {
 
             // Aproveita o login do admin pra manter o backup diário em dia
             if ($usuario['PERFIL'] === 'admin') {
-                if (function_exists('fastcgi_finish_request')) {
-                    fastcgi_finish_request();
-                } else {
-                    @ob_end_flush();
-                    @flush();
-                }
                 backupDiarioSeNecessario($conn);
             }
         } else {
