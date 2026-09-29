@@ -17,8 +17,8 @@ const formatarKm = v => Number(v).toLocaleString('pt-BR') + ' km';
 
 // ── Estado ────────────────────────────────────────────
 const estado = {
-  filtros: { busca: '', marca: '', tipo: '', combustivel: '', precoMax: 0 },
-  favoritos: new Set(JSON.parse(localStorage.getItem('ae_fav_cli_' + sessao.id) || '[]')),
+  filtros: { busca: '', marca: '', tipo: '', combustivel: '', precoMax: 0, soFavoritos: false },
+  favoritos: new Set(JSON.parse(localStorage.getItem('ae_fav_cli_' + sessao.id) || '[]').map(String)),
   veiculoAtivo: null, contatoVeiculoId: null
 };
 
@@ -92,7 +92,7 @@ function initFiltros() {
 
 function resetarFiltros() {
   const fPreco = document.getElementById('fPreco');
-  estado.filtros = { busca: '', marca: '', tipo: '', combustivel: '', precoMax: fPreco ? +fPreco.max : 900000 };
+  estado.filtros = { busca: '', marca: '', tipo: '', combustivel: '', precoMax: fPreco ? +fPreco.max : 900000, soFavoritos: false };
 
   if(document.getElementById('busca')) document.getElementById('busca').value = '';
   if(document.getElementById('fMarca')) document.getElementById('fMarca').value = '';
@@ -100,6 +100,7 @@ function resetarFiltros() {
   if(fPreco) fPreco.value = fPreco.max;
 
   document.querySelectorAll('#chipsCombus .chip').forEach(c => c.classList.remove('on'));
+  document.getElementById('chipFavoritos')?.classList.remove('on');
 
   const lbl = document.getElementById('labelPreco');
   if(lbl && fPreco) lbl.textContent = formatarPreco(fPreco.max);
@@ -107,11 +108,17 @@ function resetarFiltros() {
   renderCards();
 }
 
+function toggleFiltroFavoritos() {
+  estado.filtros.soFavoritos = !estado.filtros.soFavoritos;
+  document.getElementById('chipFavoritos').classList.toggle('on', estado.filtros.soFavoritos);
+  renderCards();
+}
+
 // ── Render ────────────────────────────────────────────
 function renderCards() {
-  const { busca, marca, tipo, combustivel, precoMax } = estado.filtros;
+  const { busca, marca, tipo, combustivel, precoMax, soFavoritos } = estado.filtros;
   const ordem = document.getElementById('ordem')?.value || '';
-  
+
   // Lê direto da nossa variável populada pelo banco
   let lista = VEICULOS.filter(v => v.status !== 'vendido');
 
@@ -119,6 +126,7 @@ function renderCards() {
   if (marca)       lista = lista.filter(v => v.marca === marca);
   if (tipo)        lista = lista.filter(v => v.tipo === tipo);
   if (combustivel) lista = lista.filter(v => v.combustivel === combustivel);
+  if (soFavoritos) lista = lista.filter(v => estado.favoritos.has(v.id));
   lista = lista.filter(v => v.preco <= precoMax);
 
   switch (ordem) {
@@ -177,6 +185,7 @@ function renderCards() {
 // ── Favoritos ─────────────────────────────────────────
 function toggleFav(e, id) {
   e.stopPropagation();
+  id = String(id); // a API entrega os ids como string; normaliza pra bater com o Set
   if (estado.favoritos.has(id)) { estado.favoritos.delete(id); toast('Removido dos favoritos'); }
   else { estado.favoritos.add(id); toast('❤ Adicionado aos favoritos'); }
   salvarFav(); renderCards();

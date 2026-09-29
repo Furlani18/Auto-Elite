@@ -15,7 +15,7 @@ const estado = {
     busca: ''
   },
   ordenacao: 'destaque',
-  favoritos: new Set(JSON.parse(localStorage.getItem('ae_favoritos') || '[]')),
+  favoritos: new Set(JSON.parse(localStorage.getItem('ae_favoritos') || '[]').map(String)),
   modalAberto: null
 };
 

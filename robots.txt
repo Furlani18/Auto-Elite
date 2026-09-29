@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /cliente.html
+Disallow: /login.html
+Disallow: /api_*.php
+Disallow: /uploads/
+Disallow: /backups/
+Disallow: /phpmailer/
+Disallow: /config.example.php
+
+Sitemap: https://autoelite.infinityfree.me/sitemap.xml
