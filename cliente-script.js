@@ -197,7 +197,15 @@ function abrirDetalhe(id) {
 
   const mImg = document.getElementById('modalImg') || document.getElementById('mImg');
   if(mImg) { mImg.src = v.imagem; mImg.alt = v.nome; }
-  
+
+  const mThumbs = document.getElementById('modalThumbs') || document.getElementById('mThumbs');
+  if(mThumbs) {
+      const todasFotos = [v.imagem, ...(v.galeria || []).map(f => f.url)];
+      mThumbs.innerHTML = todasFotos.length > 1
+        ? todasFotos.map((url, i) => `<img src="${url}" alt="" class="${i === 0 ? 'ativa' : ''}" data-url="${url}" onclick="trocarFotoModal(this)">`).join('')
+        : '';
+  }
+
   const mMarca = document.getElementById('modalMarca') || document.getElementById('mMarca');
   if(mMarca) mMarca.textContent = v.marca;
   
@@ -343,6 +351,14 @@ function fecharModal(id = 'modalOverlay') {
   const modal = document.getElementById(id);
   if(modal) modal.classList.remove('open');
   document.body.style.overflow = '';
+}
+
+function trocarFotoModal(thumb) {
+  const mImg = document.getElementById('modalImg') || document.getElementById('mImg');
+  if(mImg) mImg.src = thumb.dataset.url;
+  const mThumbs = document.getElementById('modalThumbs') || document.getElementById('mThumbs');
+  mThumbs?.querySelectorAll('img').forEach(t => t.classList.remove('ativa'));
+  thumb.classList.add('ativa');
 }
 
 document.querySelectorAll('.modal-overlay').forEach(ov => {

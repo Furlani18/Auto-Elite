@@ -229,7 +229,7 @@ function renderLeadsRecentes() {
 }
 
 function carregarDadosAdmin() {
-  Promise.all([
+  return Promise.all([
     fetch('api_carros.php').then(res => res.json()),
     fetch('api_leads.php').then(res => res.json())
   ])
@@ -406,8 +406,13 @@ function abrirModalVeiculo(id = null) {
     
     // Reconstrói as características separadas por vírgula para o input
     document.getElementById('vCaracteristicas').value = v.caracteristicas ? v.caracteristicas.join(', ') : '';
-    
+
     previewImagem();
+
+    document.getElementById('secaoGaleria').style.display = 'block';
+    renderGaleriaEdicao(v.galeria || []);
+  } else {
+    document.getElementById('secaoGaleria').style.display = 'none';
   }
 
   document.getElementById('modalOverlay').classList.add('open');
@@ -430,6 +435,8 @@ function limparFormVeiculo() {
   document.getElementById('vDestaque').checked = false;
   document.getElementById('vImagemArquivo').value = '';
   document.getElementById('previewImg').classList.remove('show');
+  document.getElementById('vGaleriaArquivos').value = '';
+  document.getElementById('galeriaGrid').innerHTML = '';
 }
 
 function previewImagem() {
@@ -474,6 +481,73 @@ function uploadImagem() {
       campoUrl.disabled = false;
       campoUrl.placeholder = 'ou cole uma URL de imagem';
     });
+}
+
+// ── Galeria de fotos extras (só disponível editando um veículo já salvo) ──
+function renderGaleriaEdicao(galeria) {
+  document.getElementById('galeriaGrid').innerHTML = galeria.map(foto => `
+    <div class="galeria-item">
+      <img src="${foto.url}" alt="">
+      <button class="remover" onclick="removerFotoGaleria(${foto.id})" title="Remover">✕</button>
+    </div>`).join('');
+}
+
+function uploadFotosGaleria() {
+  const input = document.getElementById('vGaleriaArquivos');
+  const carroId = document.getElementById('veiculoId').value;
+  const arquivos = [...input.files];
+  if (!arquivos.length || !carroId) return;
+
+  Promise.all(arquivos.map(arquivo => {
+    const formData = new FormData();
+    formData.append('imagem', arquivo);
+    return fetch('api_upload_imagem.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.sucesso) throw new Error(data.mensagem);
+        return fetch('api_adicionar_foto_carro.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ carroId, url: data.url })
+        }).then(res => res.json());
+      });
+  }))
+  .then(() => {
+    input.value = '';
+    toast('✅ Fotos adicionadas!', 'sucesso');
+    return carregarDadosAdmin();
+  })
+  .then(() => {
+    const atualizado = veiculosDoBanco.find(carro => carro.id == carroId);
+    if (atualizado) renderGaleriaEdicao(atualizado.galeria || []);
+  })
+  .catch(erro => {
+    alert('❌ Erro ao enviar fotos: ' + erro.message);
+    input.value = '';
+  });
+}
+
+function removerFotoGaleria(fotoId) {
+  if (!confirm('Remover essa foto da galeria?')) return;
+
+  fetch('api_remover_foto_carro.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: fotoId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.sucesso) {
+      const carroId = document.getElementById('veiculoId').value;
+      return carregarDadosAdmin().then(() => {
+        const atualizado = veiculosDoBanco.find(carro => carro.id == carroId);
+        if (atualizado) renderGaleriaEdicao(atualizado.galeria || []);
+      });
+    } else {
+      alert('❌ ' + data.mensagem);
+    }
+  })
+  .catch(() => alert('❌ Erro ao remover a foto.'));
 }
 
 function salvarVeiculo() {

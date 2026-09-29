@@ -311,8 +311,16 @@ function abrirModal(id) {
     body: JSON.stringify({ id })
   }).catch(() => {});
 
-  document.getElementById('modalImg').src = v.imagem;
-  document.getElementById('modalImg').alt = v.nome;
+  const modalImg = document.getElementById('modalImg');
+  modalImg.src = v.imagem;
+  modalImg.alt = v.nome;
+
+  const todasFotos = [v.imagem, ...(v.galeria || []).map(f => f.url)];
+  const thumbs = document.getElementById('modalThumbs');
+  thumbs.innerHTML = todasFotos.length > 1
+    ? todasFotos.map((url, i) => `<img src="${url}" alt="" class="${i === 0 ? 'ativa' : ''}" data-url="${url}" onclick="trocarFotoModal(this)">`).join('')
+    : '';
+
   document.getElementById('modalMarca').textContent = v.marca;
   document.getElementById('modalNome').textContent = v.nome;
   document.getElementById('modalDesc').textContent = v.descricao;
@@ -353,6 +361,12 @@ function fecharModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
   estado.modalAberto = null;
+}
+
+function trocarFotoModal(thumb) {
+  document.getElementById('modalImg').src = thumb.dataset.url;
+  document.querySelectorAll('#modalThumbs img').forEach(t => t.classList.remove('ativa'));
+  thumb.classList.add('ativa');
 }
 
 function initModal() {

@@ -913,6 +913,25 @@ input[type="range"]::-webkit-slider-thumb {
   transition: var(--trans);
 }
 .modal-close:hover { background: rgba(255,255,255,.15); }
+.modal-thumbs {
+  display: flex;
+  gap: .5rem;
+  padding: 1rem 2.5rem 0;
+  overflow-x: auto;
+}
+.modal-thumbs:empty { display: none; }
+.modal-thumbs img {
+  width: 64px; height: 48px;
+  object-fit: cover;
+  border-radius: .4rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: .6;
+  transition: var(--trans);
+  flex-shrink: 0;
+}
+.modal-thumbs img:hover { opacity: .9; }
+.modal-thumbs img.ativa { border-color: var(--ouro); opacity: 1; }
 .modal-body { padding: 2rem 2.5rem; }
 .modal-marca {
   font-size: .75rem;

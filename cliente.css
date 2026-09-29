@@ -254,6 +254,15 @@ input[type="range"]::-webkit-slider-thumb {
   display: grid; place-items: center; transition: var(--trans);
 }
 .modal-close:hover { background: rgba(255,255,255,.15); }
+.modal-thumbs { display: flex; gap: .5rem; padding: .85rem 2rem 0; overflow-x: auto; }
+.modal-thumbs:empty { display: none; }
+.modal-thumbs img {
+  width: 60px; height: 44px; object-fit: cover; border-radius: .4rem;
+  cursor: pointer; border: 2px solid transparent; opacity: .6;
+  transition: var(--trans); flex-shrink: 0;
+}
+.modal-thumbs img:hover { opacity: .9; }
+.modal-thumbs img.ativa { border-color: var(--ouro); opacity: 1; }
 .modal-body { padding: 1.75rem 2rem; }
 .modal-marca { font-size: .72rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--ouro); margin-bottom: .35rem; }
 .modal-nome  { font-family: var(--ff-d); font-size: 1.85rem; font-weight: 700; margin-bottom: 1rem; }

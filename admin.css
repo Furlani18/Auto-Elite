@@ -309,6 +309,23 @@ tbody td {
 }
 .preview-img.show { display: block; }
 
+/* ── Galeria de fotos extras ── */
+.galeria-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: .6rem; margin-bottom: .75rem;
+}
+.galeria-item { position: relative; aspect-ratio: 4/3; }
+.galeria-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  border-radius: .4rem; border: 1px solid rgba(255,255,255,.08);
+}
+.galeria-item .remover {
+  position: absolute; top: -6px; right: -6px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--vermelho); color: #fff; border: none;
+  font-size: .7rem; cursor: pointer; display: grid; place-items: center;
+}
+
 /* ── Toast ── */
 .toast {
   position: fixed; bottom: 1.5rem; right: 1.5rem;

@@ -306,6 +306,17 @@
             <textarea id="vCaracteristicas" rows="2" placeholder="Teto solar, Bancos em couro, Câmera 360°..."></textarea>
           </div>
         </div>
+
+        <div id="secaoGaleria" style="display:none">
+          <div class="form-secao">Fotos adicionais</div>
+          <div class="form-grid cols1">
+            <div class="fg">
+              <div class="galeria-grid" id="galeriaGrid"></div>
+              <input type="file" id="vGaleriaArquivos" accept="image/jpeg,image/png,image/webp,image/gif" multiple onchange="uploadFotosGaleria()">
+              <p style="font-size:.75rem;color:var(--cinza);margin-top:.4rem">Selecione uma ou mais fotos extras pra mostrar na galeria do carro.</p>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
