@@ -4,6 +4,12 @@ require 'conexao.php';
 
 $dados = json_decode(file_get_contents("php://input"));
 
+// Honeypot: campo escondido que só bot preenche. Finge sucesso e não cadastra nada.
+if (!empty($dados->empresa)) {
+    echo json_encode(["sucesso" => true, "mensagem" => "Conta criada com sucesso!"]);
+    exit;
+}
+
 if (isset($dados->nome) && isset($dados->email) && isset($dados->senha)) {
     $nome = $dados->nome;
     $email = $dados->email;

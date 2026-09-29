@@ -306,7 +306,8 @@ function enviarContato() {
     telefone: telefone,
     email: email,
     mensagem: mensagem,
-    veiculoId: estado.contatoVeiculoId // ID do carro que ele clicou
+    veiculoId: estado.contatoVeiculoId, // ID do carro que ele clicou
+    empresa: document.getElementById('cEmpresa')?.value || ''
   };
 
   // Envia para o servidor

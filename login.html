@@ -118,6 +118,7 @@
       <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 1.5rem;">Cadastre-se para acessar a vitrine exclusiva.</p>
       
       <form id="formCadastro" onsubmit="fazerCadastro(event)">
+        <input type="text" id="cadEmpresa" name="empresa" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
         <div style="margin-bottom: 1rem;">
           <label style="color: #ccc; display: block; margin-bottom: 5px; font-size: 0.85rem;">Nome completo *</label>
           <input type="text" id="cadNome" placeholder="Ex: João da Silva" required autocomplete="name" style="width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 4px; box-sizing: border-box; font-family: 'Inter', sans-serif;">

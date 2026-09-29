@@ -376,6 +376,7 @@ function initFormAvaliacao() {
     btn.textContent = 'Enviando...';
     btn.disabled = true;
 
+    const empresa = document.getElementById('avEmpresa').value;
     const nome = document.getElementById('avNome').value.trim();
     const telefone = document.getElementById('avTelefone').value.trim();
     const email = document.getElementById('avEmail').value.trim();
@@ -392,7 +393,7 @@ function initFormAvaliacao() {
     fetch('api_avaliacoes.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, telefone, email, mensagem })
+      body: JSON.stringify({ nome, telefone, email, mensagem, empresa })
     })
     .then(res => res.json())
     .then(data => {

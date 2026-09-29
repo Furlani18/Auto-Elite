@@ -113,6 +113,7 @@ function fazerCadastro(e) {
   const nome = document.getElementById('cadNome').value.trim();
   const email = document.getElementById('cadEmail').value.trim();
   const senha = document.getElementById('cadSenha').value;
+  const empresa = document.getElementById('cadEmpresa').value;
   const btn = document.getElementById('btnCadastrar');
   const erro = document.getElementById('erroCadMsg');
 
@@ -125,7 +126,7 @@ function fazerCadastro(e) {
   fetch('api_cadastrar_cliente.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, email, senha })
+    body: JSON.stringify({ nome, email, senha, empresa })
   })
   .then(res => res.json())
   .then(data => {
