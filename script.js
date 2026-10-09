@@ -82,6 +82,21 @@ function initHero() {
   });
 }
 
+/* ─── Skeleton de carregamento ───────────────────────────────── */
+function mostrarSkeletons() {
+  const skeletonCard = `
+    <div class="skeleton-card">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line w40"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line w60"></div>
+      </div>
+    </div>`;
+  const grid = document.getElementById('veiculosGrid');
+  if (grid) grid.innerHTML = skeletonCard.repeat(6);
+}
+
 /* ─── Destaques ───────────────────────────────────────────── */
 function renderDestaques() {
   const destq = VEICULOS.filter(v => v.destaque);
@@ -499,6 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAnimacoes();
   animarContadores();
   initScrollLinks();
+  mostrarSkeletons();
 
   // 2. Busca os carros reais da API
   fetch('api_carros.php')

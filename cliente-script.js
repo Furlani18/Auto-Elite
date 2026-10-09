@@ -114,6 +114,21 @@ function toggleFiltroFavoritos() {
   renderCards();
 }
 
+// ── Skeleton de carregamento ───────────────────────────
+function mostrarSkeletons() {
+  const skeletonCard = `
+    <div class="skeleton-card">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line w40"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line w60"></div>
+      </div>
+    </div>`;
+  const grid = document.getElementById('veiculosGrid') || document.getElementById('cardsGrid');
+  if (grid) grid.innerHTML = skeletonCard.repeat(6);
+}
+
 // ── Render ────────────────────────────────────────────
 function renderCards() {
   const { busca, marca, tipo, combustivel, precoMax, soFavoritos } = estado.filtros;
@@ -381,6 +396,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const elName = document.getElementById('userName');
   if (elAvatar) elAvatar.textContent = sessao.avatar || '👤';
   if (elName) elName.textContent = sessao.nome || 'Cliente';
+
+  mostrarSkeletons();
 
   // Busca os carros reais do MySQL
   fetch('api_carros.php')
