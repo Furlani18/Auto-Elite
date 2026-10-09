@@ -10,6 +10,9 @@
 
 html { scroll-behavior: smooth; font-size: 16px; }
 
+/* Compensa a altura do navbar fixo, senão a seção fica escondida atrás dele ao rolar */
+section[id] { scroll-margin-top: 90px; }
+
 body {
   font-family: var(--ff-body);
   background: var(--preto);
